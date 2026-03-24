@@ -1,0 +1,72 @@
+[
+  {
+    "category": "Romantic",
+    "is_adult": false,
+    "question_text": "ما هو المكان المفضل لك لقضاء عطلة رومانسية؟",
+    "options": ["شاطئ البحر", "كوخ في الجبال", "مدينة تاريخية", "البقاء في المنزل"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Daily Preferences",
+    "is_adult": false,
+    "question_text": "أي من هذه الأنشطة تفضل القيام بها في يوم الإجازة؟",
+    "options": ["مشاهدة فيلم بالمنزل", "الخروج للتسوق", "ممارسة الرياضة", "زيارة الأصدقاء"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Fun / Personality",
+    "is_adult": false,
+    "question_text": "ما هي أكثر صفة تجذبك في شريك حياتك؟",
+    "options": ["روح الدعابة", "الذكاء", "الاهتمام والرعاية", "الطموح"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Daily Preferences",
+    "is_adult": false,
+    "question_text": "كيف تفضل بدء صباحك؟",
+    "options": ["شرب القهوة بهدوء", "تصفح الهاتف", "ممارسة الرياضة", "الإفطار معاً"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Fun / Personality",
+    "is_adult": false,
+    "question_text": "لو كان بإمكانك العيش في حقبة زمنية أخرى، ماذا تختار؟",
+    "options": ["الستينات/السبعينات", "عصر النهضة", "المستقبل", "أنا سعيد في وقتنا الحالي"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Romantic",
+    "is_adult": false,
+    "question_text": "ما هو أفضل تعبير عن الحب بالنسبة لك؟",
+    "options": ["الهدايا المفاجئة", "الكلمات الرومانسية", "قضاء الوقت معاً", "الدعم في الأوقات الصعبة"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Fun / Personality",
+    "is_adult": false,
+    "question_text": "ما هو فيلمكم المفضل كزوجين؟",
+    "options": ["فيلم رومانسي كوميدي", "أكشن ومغامرات", "دراما واقعية", "رعب وإثارة"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Daily Preferences",
+    "is_adult": false,
+    "question_text": "عندما تواجهون مشكلة، كيف تتصرف؟",
+    "options": ["أفضل الصمت قليلاً", "أريد حلها فوراً", "أطلب رأي صديق", "أنتظر حتى نهدأ"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Optional +18",
+    "is_adult": true,
+    "question_text": "ما هو أكثر شيء يجدد الشغف بينكم؟",
+    "options": ["تغيير الروتين", "الحديث بصراحة", "عطلة مفاجئة", "تجهيز أجواء رومانسية"],
+    "correct_match_logic": "exact_match"
+  },
+  {
+    "category": "Romantic",
+    "is_adult": false,
+    "question_text": "أين تفضل أن تقام لحظة مميزة أو احتفال خاص؟",
+    "options": ["مطعم فاخر", "في المنزل على ضوء الشموع", "في الطبيعة", "وسط العائلة"],
+    "correct_match_logic": "exact_match"
+  }
+]
