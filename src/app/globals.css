@@ -11,11 +11,35 @@
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
 
-  --color-romantic-pink: #FF6B8A;
-  --color-romantic-rose: #FF8FA3;
-  --color-romantic-lavender: #CDB4DB;
-  --color-romantic-peach: #FFC8A2;
-  --color-romantic-gold: #FFD166;
+  /* ─── Romantic Color System ─── */
+  --color-primary-50: #FFF1F3;
+  --color-primary-100: #FFE4E8;
+  --color-primary-200: #FECDD6;
+  --color-primary-300: #FEA3B4;
+  --color-primary-400: #FD6B88;
+  --color-primary-500: #F43F5E;
+  --color-primary-600: #E11D48;
+  
+  --color-secondary-50: #F5F3FF;
+  --color-secondary-100: #EDE9FE;
+  --color-secondary-200: #DDD6FE;
+  --color-secondary-300: #C4B5FD;
+  --color-secondary-400: #A78BFA;
+  --color-secondary-500: #8B5CF6;
+  
+  --color-accent-gold: #FFD166;
+  --color-accent-rose: #FF8FA3;
+  --color-accent-lavender: #CDB4DB;
+  
+  /* ─── Functional Tokens ─── */
+  --radius-romantic: 1.5rem;
+  --radius-romantic-sm: 0.75rem;
+  --radius-romantic-lg: 2.5rem;
+  
+  --shadow-romantic: 0 10px 25px -5px rgba(255, 107, 138, 0.1), 0 8px 10px -6px rgba(255, 107, 138, 0.1);
+  --shadow-romantic-lg: 0 20px 50px -12px rgba(255, 107, 138, 0.2);
+  
+  --spacing-romantic: 2rem;
 }
 
 @media (prefers-color-scheme: dark) {
