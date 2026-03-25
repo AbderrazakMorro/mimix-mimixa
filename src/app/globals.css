@@ -30,6 +30,11 @@
   --color-accent-gold: #FFD166;
   --color-accent-rose: #FF8FA3;
   --color-accent-lavender: #CDB4DB;
+
+  /* Aliases used in code */
+  --color-romantic-pink: #FF6B8A;
+  --color-romantic-rose: #FF8FA3;
+  --color-romantic-lavender: #CDB4DB;
   
   /* ─── Functional Tokens ─── */
   --radius-romantic: 1.5rem;
@@ -103,7 +108,7 @@ body {
 
 /* ─── Glassmorphism Utilities ─── */
 .glass {
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.8);
@@ -111,7 +116,7 @@ body {
 }
 
 .glass-strong {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
   border: 1px solid rgba(255, 255, 255, 0.9);

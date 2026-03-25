@@ -46,7 +46,7 @@ export default function Navbar() {
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-2 sm:px-4 md:px-6 py-3 sm:py-4 ${scrolled ? 'mt-0' : 'mt-1 sm:mt-2'}`}>
-      <div className={`max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 rounded-full transition-all duration-300 ${scrolled ? 'glass-strong shadow-lg border-white/40' : 'glass border-white/20'}`}>
+      <div className={`max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/95 shadow-lg border-white' : 'glass-strong border-white/40'}`}>
         {/* Brand */}
         <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group">
           <motion.div 
@@ -66,7 +66,7 @@ export default function Navbar() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`p-2 sm:p-2.5 rounded-full transition-colors flex items-center gap-2 ${pathname === '/' ? 'bg-pink-50 text-romantic-pink' : 'text-gray-400 hover:bg-gray-100'}`}
+              className={`p-2 sm:p-2.5 rounded-full transition-colors flex items-center gap-2 ${pathname === '/' ? 'bg-pink-100 text-romantic-pink' : 'text-gray-700 hover:bg-gray-200'}`}
             >
               <Home size={20} className="sm:w-[22px] sm:h-[22px]" />
               <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden lg:block">Home</span>
@@ -96,7 +96,7 @@ export default function Navbar() {
                   {user ? 'My Profile' : 'Sign In'}
                 </span>
                 {user?.username && (
-                  <span className="text-[9px] text-gray-400 font-medium truncate max-w-[60px] leading-tight">
+                  <span className="text-[10px] text-gray-600 font-bold truncate max-w-[60px] leading-tight">
                     {user.username}
                   </span>
                 )}

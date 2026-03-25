@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Heart, RefreshCw, Home, Sparkles, Star } from 'lucide-react';
 import { use, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import RomanticButton from '@/components/ui/RomanticButton';
@@ -44,7 +45,25 @@ const Confetti = () => {
 
 export default function ResultsPage({ params }: { params: Promise<{ roomCode: string }> }) {
   const { roomCode } = use(params);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  
+  const adult = searchParams.get('adult') === 'true';
+  const count = searchParams.get('count') || '10';
   const score = 85;
+
+  const generateRoomCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    return Array.from({length: 6}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+  };
+
+  const playAgainSame = () => {
+    router.push(`/game/${roomCode}?adult=${adult}&count=${count}`);
+  };
+
+  const playAgainNew = () => {
+    router.push(`/room/${generateRoomCode()}?adult=${adult}&count=${count}`);
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 md:p-6 text-center relative overflow-hidden">
@@ -144,16 +163,21 @@ export default function ResultsPage({ params }: { params: Promise<{ roomCode: st
           </p>
         </div>
 
-        <div className="flex gap-3 md:gap-4">
-          <Link href="/" className="flex-1">
-            <RomanticButton variant="ghost" fullWidth className="border-2 border-gray-200 hover:border-gray-300">
-              <Home size={20} /> Exit
-            </RomanticButton>
-          </Link>
-          <div className="flex-1">
-            <RomanticButton variant="primary" fullWidth>
-              <RefreshCw size={20} /> Play Again
-            </RomanticButton>
+        <div className="flex flex-col gap-3">
+          <RomanticButton variant="primary" fullWidth onClick={playAgainSame}>
+            <RefreshCw size={20} /> Rematch (Same Room)
+          </RomanticButton>
+          <div className="flex gap-3 md:gap-4">
+            <Link href="/" className="flex-1">
+              <RomanticButton variant="ghost" fullWidth className="border-2 border-gray-200 hover:border-gray-300">
+                <Home size={20} /> Exit
+              </RomanticButton>
+            </Link>
+            <div className="flex-1">
+              <RomanticButton variant="secondary" fullWidth onClick={playAgainNew}>
+                <Sparkles size={20} /> New Session
+              </RomanticButton>
+            </div>
           </div>
         </div>
       </GlassCard>

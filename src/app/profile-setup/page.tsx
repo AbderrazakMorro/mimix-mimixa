@@ -7,7 +7,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import RomanticButton from '@/components/ui/RomanticButton';
-import { Camera, Image as ImageIcon, Save, LogOut, CheckCircle2, User, Mail, Shield, Trash2, Eye, EyeOff, Palette } from 'lucide-react';
+import { useBackground } from '@/components/BackgroundContext';
+import RelationshipTab from '@/components/RelationshipTab';
+import { Camera, Image as ImageIcon, Save, LogOut, CheckCircle2, User, Mail, Shield, Trash2, Eye, EyeOff, Palette, HeartHandshake } from 'lucide-react';
 
 const THEME_PRESETS = [
   { name: 'Aurora', css: 'bg-gradient-to-tr from-romantic-pink to-romantic-lavender', emoji: '🌌' },
@@ -33,12 +35,14 @@ export default function ProfileSetupPage() {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [bgPreview, setBgPreview] = useState<string | null>(null);
   const [savedSuccess, setSavedSuccess] = useState(false);
-  const [activeTab, setActiveTab] = useState<'profile' | 'theme' | 'settings'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'partner' | 'theme' | 'settings'>('profile');
   const [bgMotif, setBgMotif] = useState<Motif>('hearts');
   const [bgIntensity, setBgIntensity] = useState<Intensity>('medium');
   const [bgAnimEnabled, setBgAnimEnabled] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [diagData, setDiagData] = useState<any>(null);
+  const { setBackgroundUrl } = useBackground();
 
   useEffect(() => {
     async function loadSession() {
@@ -111,6 +115,7 @@ export default function ProfileSetupPage() {
 
     if (res.ok) {
       setSavedSuccess(true);
+      if (finalBgUrl) setBackgroundUrl(finalBgUrl);
       // Dispatch event to notify Navbar to refresh
       window.dispatchEvent(new Event('userUpdated'));
       setTimeout(() => setSavedSuccess(false), 3000);
@@ -129,6 +134,16 @@ export default function ProfileSetupPage() {
     if (res.ok) {
       await fetch('/api/auth/logout', { method: 'POST' });
       router.push('/signup');
+    }
+  };
+  
+  const handleRunDiagnostics = async () => {
+    try {
+      const res = await fetch('/api/diag/e2ee');
+      const data = await res.json();
+      setDiagData(data);
+    } catch (err) {
+      setError('Diagnostics failed');
     }
   };
 
@@ -153,6 +168,7 @@ export default function ProfileSetupPage() {
 
   const tabs = [
     { id: 'profile' as const, label: 'Profile', icon: User },
+    { id: 'partner' as const, label: 'Partner', icon: HeartHandshake },
     { id: 'theme' as const, label: 'Theme', icon: Palette },
     { id: 'settings' as const, label: 'Settings', icon: Shield },
   ];
@@ -182,7 +198,7 @@ export default function ProfileSetupPage() {
           <h1 className="text-heading-md font-serif font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-romantic-pink to-romantic-lavender">
             Profile Management
           </h1>
-          <p className="text-gray-500 mt-1 text-sm font-medium">Customize your romantic experience</p>
+          <p className="text-gray-700 mt-1 text-sm font-bold">Customize your romantic experience</p>
         </div>
 
         {/* Tab Navigation - Responsive Scroll */}
@@ -193,8 +209,8 @@ export default function ProfileSetupPage() {
               onClick={() => setActiveTab(tab.id)}
               className={`flex-1 shrink-0 px-4 md:px-0 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all ${
                 activeTab === tab.id
-                  ? 'bg-white text-romantic-pink shadow-sm glow-pink'
-                  : 'text-gray-400 hover:text-gray-600'
+                  ? 'bg-white text-romantic-pink shadow-sm glow-pink border border-pink-100'
+                  : 'text-gray-600 hover:text-gray-800'
               }`}
             >
               <tab.icon size={16} />
@@ -226,7 +242,7 @@ export default function ProfileSetupPage() {
                     <input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                   </div>
                   {avatarPreview && (
-                    <button type="button" onClick={removeAvatar} className="mt-2 text-[11px] text-gray-400 hover:text-red-400 transition-colors font-medium">
+                    <button type="button" onClick={removeAvatar} className="mt-2 text-[11px] text-gray-600 hover:text-red-500 transition-colors font-bold">
                       Remove avatar
                     </button>
                   )}
@@ -250,10 +266,10 @@ export default function ProfileSetupPage() {
                 {/* Email (read-only) */}
                 {user?.email && (
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 mb-2 flex items-center gap-2">
+                    <label className="block text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
                       <Mail size={14} /> Email
                     </label>
-                    <div className="w-full px-5 py-4 rounded-2xl border-2 border-gray-50 bg-gray-50/80 text-gray-400 font-medium text-sm truncate">
+                    <div className="w-full px-5 py-4 rounded-2xl border-2 border-gray-100 bg-gray-50/80 text-gray-600 font-bold text-sm truncate">
                       {user.email}
                     </div>
                   </div>
@@ -319,19 +335,19 @@ export default function ProfileSetupPage() {
 
                   {/* Enable/Disable */}
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600 font-medium">Background Particles</span>
-                    <button type="button" onClick={() => setBgAnimEnabled(!bgAnimEnabled)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${bgAnimEnabled ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                    <span className="text-sm text-gray-800 font-bold">Background Particles</span>
+                    <button type="button" onClick={() => setBgAnimEnabled(!bgAnimEnabled)} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all ${bgAnimEnabled ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}>
                       {bgAnimEnabled ? <><Eye size={12} /> On</> : <><EyeOff size={12} /> Off</>}
                     </button>
                   </div>
 
                   {/* Motif Selector */}
                   <div>
-                    <span className="text-xs text-gray-500 font-bold uppercase tracking-wide">Motif</span>
+                    <span className="text-xs text-gray-600 font-bold uppercase tracking-wide">Motif</span>
                     <div className="flex gap-2 mt-1.5">
                       {([['hearts', '❤️'], ['butterflies', '🦋'], ['tulips', '🌷']] as [Motif, string][]).map(([m, icon]) => (
                         <button key={m} type="button" onClick={() => setBgMotif(m)}
-                          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all border-2 ${bgMotif === m ? 'border-romantic-pink bg-pink-50 text-romantic-pink' : 'border-gray-100 text-gray-400 hover:border-pink-200'}`}>
+                          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all border-2 ${bgMotif === m ? 'border-romantic-pink bg-pink-100 text-romantic-pink' : 'border-gray-200 text-gray-600 hover:border-pink-300'}`}>
                           {icon} {m}
                         </button>
                       ))}
@@ -340,11 +356,11 @@ export default function ProfileSetupPage() {
 
                   {/* Intensity */}
                   <div>
-                    <span className="text-xs text-gray-500 font-bold uppercase tracking-wide">Intensity</span>
+                    <span className="text-xs text-gray-600 font-bold uppercase tracking-wide">Intensity</span>
                     <div className="flex gap-2 mt-1.5">
                       {(['low', 'medium', 'high'] as Intensity[]).map((lvl) => (
                         <button key={lvl} type="button" onClick={() => setBgIntensity(lvl)}
-                          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all border-2 capitalize ${bgIntensity === lvl ? 'border-romantic-pink bg-pink-50 text-romantic-pink' : 'border-gray-100 text-gray-400 hover:border-pink-200'}`}>
+                          className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all border-2 capitalize ${bgIntensity === lvl ? 'border-romantic-pink bg-pink-100 text-romantic-pink' : 'border-gray-200 text-gray-600 hover:border-pink-300'}`}>
                           {lvl}
                         </button>
                       ))}
@@ -354,23 +370,44 @@ export default function ProfileSetupPage() {
               </motion.div>
             )}
 
+            {/* ─── PARTNER TAB ─── */}
+            {activeTab === 'partner' && user && (
+              <motion.div key="partner" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+                <RelationshipTab currentUserId={user.id} />
+              </motion.div>
+            )}
+
             {/* ─── SETTINGS TAB ─── */}
             {activeTab === 'settings' && (
               <motion.div key="settings" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="space-y-6">
                 {/* Account Info */}
                 <div className="bg-white/60 p-5 rounded-2xl border border-gray-100 space-y-3">
-                  <h3 className="text-sm font-bold text-gray-700 flex items-center gap-2"><Shield size={14} /> Account</h3>
+                  <h3 className="text-sm font-bold text-gray-800 flex items-center gap-2"><Shield size={14} /> Account</h3>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Email</span>
-                    <span className="text-gray-700 font-medium truncate max-w-[60%]">{user?.email}</span>
+                    <span className="text-gray-600 font-bold">Email</span>
+                    <span className="text-gray-800 font-bold truncate max-w-[60%]">{user?.email}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-500">Member since</span>
-                    <span className="text-gray-700 font-medium">{user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}</span>
+                    <span className="text-gray-600 font-bold">Member since</span>
+                    <span className="text-gray-800 font-bold">{user?.created_at ? new Date(user.created_at).toLocaleDateString() : '—'}</span>
                   </div>
                 </div>
 
-                {/* Danger Zone */}
+                  <div className="bg-blue-50/50 p-5 rounded-2xl border border-blue-100 space-y-3">
+                    <h3 className="text-sm font-bold text-blue-500 flex items-center gap-2">🛡️ E2EE Diagnostics</h3>
+                    <p className="text-xs text-gray-500">Check if your secure keys are properly synced with your partner.</p>
+                    <button type="button" onClick={handleRunDiagnostics}
+                      className="w-full py-3 rounded-xl border-2 border-blue-200 text-blue-500 font-bold text-sm hover:bg-blue-50 transition-colors">
+                      Run Check
+                    </button>
+                    {diagData && (
+                      <div className="text-[10px] font-mono bg-white p-2 rounded border border-blue-100 overflow-x-auto">
+                        <pre>{JSON.stringify(diagData, null, 2)}</pre>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Danger Zone */}
                 <div className="bg-red-50/50 p-5 rounded-2xl border border-red-100 space-y-3">
                   <h3 className="text-sm font-bold text-red-400 flex items-center gap-2"><Trash2 size={14} /> Danger Zone</h3>
                   <p className="text-xs text-gray-500">Permanently delete your account and all data. This action cannot be undone.</p>

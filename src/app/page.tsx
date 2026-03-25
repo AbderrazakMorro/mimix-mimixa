@@ -25,7 +25,7 @@ export default function Home() {
         <h1 className="font-serif text-heading-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-romantic-pink to-romantic-lavender mb-3 drop-shadow-sm leading-tight">
           Mimix & Mimixa
         </h1>
-        <p className="text-gray-600 mb-8 sm:mb-10 font-medium text-body-lg px-4">
+        <p className="text-gray-800 mb-8 sm:mb-10 font-bold text-body-lg px-4">
           Discover a deeper connection.
         </p>
 
@@ -38,9 +38,9 @@ export default function Home() {
           </Link>
           
           <div className="relative flex items-center py-2">
-            <div className="flex-grow border-t border-gray-200"></div>
-            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm font-medium uppercase tracking-widest">Or</span>
-            <div className="flex-grow border-t border-gray-200"></div>
+            <div className="flex-grow border-t border-gray-300"></div>
+            <span className="flex-shrink-0 mx-4 text-gray-600 text-sm font-bold uppercase tracking-widest">Or</span>
+            <div className="flex-grow border-t border-gray-300"></div>
           </div>
           
           <Link href="/join-room" className="block outline-none">

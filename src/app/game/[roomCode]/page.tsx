@@ -44,7 +44,7 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
           setPlayerAnswer(null);
           setPartnerAnswered(false);
         } else {
-          router.push(`/results/${roomCode}`);
+          router.push(`/results/${roomCode}?adult=${adult}&count=${count}`);
         }
       }, 3000);
     }, 1500);

@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   description: "Test your romantic compatibility in this beautifully designed multiplayer experience.",
 };
 
+import { BackgroundProvider } from "@/components/BackgroundContext";
+import FloatingChat from "@/components/FloatingChat";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -20,10 +23,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-sans bg-gradient-to-br from-pink-50 via-rose-50 to-peach-50 text-gray-900 min-h-screen antialiased selection:bg-rose-300 selection:text-white`}>
-        <Navbar />
-        <main className="pt-20">
-          {children}
-        </main>
+        <BackgroundProvider>
+          <Navbar />
+          <FloatingChat />
+          <main className="pt-20">
+            {children}
+          </main>
+        </BackgroundProvider>
       </body>
     </html>
   );
