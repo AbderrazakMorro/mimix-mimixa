@@ -24,8 +24,8 @@ export async function GET() {
       .from('relationships')
       .select(`
         id, status, created_at,
-        user:users!relationships_user_id_fkey(id, username, avatar_url, public_key),
-        partner:users!relationships_partner_id_fkey(id, username, avatar_url, public_key)
+        user:users!relationships_user_id_fkey(id, username, public_key, profiles(avatar_url, display_name)),
+        partner:users!relationships_partner_id_fkey(id, username, public_key, profiles(avatar_url, display_name))
       `)
       .or(`user_id.eq.${payload.id},partner_id.eq.${payload.id}`)
       .order('created_at', { ascending: false });
@@ -35,11 +35,23 @@ export async function GET() {
     }
 
     // Process to determine the "other" person easily for frontend
-    const mapped = data?.map((rel: any) => ({
-      ...rel,
-      isInviter: rel.user.id === payload.id,
-      otherPerson: rel.user.id === payload.id ? rel.partner : rel.user
-    }));
+    const mapped = data?.map((rel: any) => {
+      const isInviter = rel.user.id === payload.id;
+      const other = isInviter ? rel.partner : rel.user;
+      
+      // Flatten profile info into otherPerson
+      const otherPerson = {
+        ...other,
+        avatar_url: other.profiles?.[0]?.avatar_url || other.avatar_url,
+        display_name: other.profiles?.[0]?.display_name || other.username
+      };
+      
+      return {
+        ...rel,
+        isInviter,
+        otherPerson
+      };
+    });
 
     return NextResponse.json({ relationships: mapped || [] });
   } catch (error: any) {

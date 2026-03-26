@@ -51,7 +51,9 @@ const motifColors: Record<Motif, string[]> = {
   tulips: ['text-romantic-pink/20', 'text-romantic-rose/15', 'text-romantic-peach/20'],
 };
 
-export default function AnimatedBackground({
+import React, { memo } from 'react';
+
+function AnimatedBackground({
   motif = 'hearts',
   intensity = 'medium',
   enabled = true,
@@ -139,3 +141,5 @@ export default function AnimatedBackground({
     </div>
   );
 }
+
+export default memo(AnimatedBackground);

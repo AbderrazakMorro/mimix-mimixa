@@ -6,6 +6,10 @@ export type Question = {
   correct_match_logic: string;
 };
 
+import { EXTRA_QUESTIONS_1 } from './extra_questions_1';
+import { EXTRA_QUESTIONS_2 } from './extra_questions_2';
+import { EXTRA_QUESTIONS_3 } from './extra_questions_3';
+
 export const ALL_QUESTIONS: Question[] = [
   {
     "category": "Optional +18",
@@ -426,5 +430,8 @@ export const ALL_QUESTIONS: Question[] = [
     "question_text": "هل تحب أن يأخذ شريكك زمام المبادرة دائماً في العلاقة؟",
     "options": ["نعم، أحب ذلك", "أفضل أن أكون أنا المبادر", "أحب المداورة بيننا", "أفضل العفوية دون قيادة"],
     "correct_match_logic": "exact_match"
-  }
+  },
+  ...EXTRA_QUESTIONS_1,
+  ...EXTRA_QUESTIONS_2,
+  ...EXTRA_QUESTIONS_3
 ];

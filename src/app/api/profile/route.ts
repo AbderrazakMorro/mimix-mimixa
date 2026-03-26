@@ -5,6 +5,62 @@ import { createServerSupabase } from '@/lib/supabase-server';
 
 const supabase = createServerSupabase();
 
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const username = searchParams.get('username');
+    const id = searchParams.get('id');
+    
+    if (!username && !id) {
+      return NextResponse.json({ error: 'Username or ID is required' }, { status: 400 });
+    }
+
+    // Start from users table which is the source of truth for identity
+    let query = supabase
+      .from('users')
+      .select(`
+        id, 
+        username, 
+        avatar_url, 
+        profiles(display_name, bio, avatar_url),
+        user_stats (
+          games_played,
+          total_score,
+          best_match_percentage
+        )
+      `);
+
+    if (id) {
+      query = query.eq('id', id);
+    } else {
+      query = query.eq('username', username);
+    }
+
+    const { data, error } = await query.single();
+
+    if (error || !data) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Flatten for consistent frontend consumption
+    const profileData = data.profiles?.[0] || {};
+    const statsData = data.user_stats?.[0] || { games_played: 0, total_score: 0, best_match_percentage: 0 };
+
+    const user = {
+      id: data.id,
+      username: data.username,
+      display_name: profileData.display_name || data.username,
+      avatar_url: profileData.avatar_url || data.avatar_url,
+      bio: profileData.bio || null,
+      user_stats: [statsData] // Keep as array for frontend compatibility if needed, or flatten further
+    };
+
+    return NextResponse.json({ user });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}
+
 export async function PUT(req: Request) {
   try {
     const cookieStore = await cookies();

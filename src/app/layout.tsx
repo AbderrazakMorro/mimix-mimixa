@@ -13,7 +13,10 @@ export const metadata: Metadata = {
 };
 
 import { BackgroundProvider } from "@/components/BackgroundContext";
+import { ProfileProvider } from "@/contexts/ProfileContext";
 import FloatingChat from "@/components/FloatingChat";
+import GameInviteNotification from "@/components/ui/GameInviteNotification";
+import WaitingForPartner from "@/components/ui/WaitingForPartner";
 
 export default function RootLayout({
   children,
@@ -24,11 +27,15 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} ${playfair.variable} font-sans bg-gradient-to-br from-pink-50 via-rose-50 to-peach-50 text-gray-900 min-h-screen antialiased selection:bg-rose-300 selection:text-white`}>
         <BackgroundProvider>
-          <Navbar />
-          <FloatingChat />
-          <main className="pt-20">
-            {children}
-          </main>
+          <ProfileProvider>
+            <Navbar />
+            <GameInviteNotification />
+            <WaitingForPartner />
+            <FloatingChat />
+            <main className="pt-20">
+              {children}
+            </main>
+          </ProfileProvider>
         </BackgroundProvider>
       </body>
     </html>

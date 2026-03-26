@@ -5,17 +5,36 @@ import { useRouter } from 'next/navigation';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import RomanticButton from '@/components/ui/RomanticButton';
-import { HeartHandshake } from 'lucide-react';
+import { HeartHandshake, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export default function JoinRoomPage() {
   const router = useRouter();
   const [roomCode, setRoomCode] = useState('');
+  const [isJoining, setIsJoining] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleJoin = (e: React.FormEvent) => {
+  const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (roomCode.trim().length > 0) {
-      router.push(`/room/${roomCode.trim().toUpperCase()}`);
+    if (roomCode.trim().length === 0) return;
+
+    setIsJoining(true);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/game/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomCode: roomCode.trim().toUpperCase() }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to join room');
+
+      router.push(`/room/${data.roomCode}`);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setIsJoining(false);
     }
   };
 
@@ -40,6 +59,17 @@ export default function JoinRoomPage() {
         </p>
 
         <form onSubmit={handleJoin} className="space-y-5">
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-medium"
+            >
+              <AlertCircle size={16} />
+              {error}
+            </motion.div>
+          )}
+          
           <div>
             <input
               type="text"
@@ -50,8 +80,8 @@ export default function JoinRoomPage() {
               className="w-full px-4 py-4 text-center text-2xl font-bold rounded-2xl border-2 border-pink-100 bg-white/80 focus:border-romantic-pink focus:outline-none focus:ring-4 focus:ring-romantic-pink/20 uppercase tracking-[0.3em] text-gray-800 transition-all placeholder-gray-300 shadow-inner"
             />
           </div>
-          <RomanticButton type="submit" fullWidth disabled={roomCode.trim().length === 0}>
-            Enter Room
+          <RomanticButton type="submit" fullWidth disabled={roomCode.trim().length === 0 || isJoining}>
+            {isJoining ? 'Joining...' : 'Enter Room'}
           </RomanticButton>
         </form>
         

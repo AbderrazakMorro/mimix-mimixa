@@ -42,12 +42,23 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Not authorized to respond to this invite' }, { status: 403 });
     }
 
-    // Update the status
-    const newStatus = action === 'accept' ? 'accepted' : 'rejected';
+    // Update the status or Delete
+    if (action === 'reject') {
+      const { error: deleteErr } = await supabase
+        .from('relationships')
+        .delete()
+        .eq('id', relationship_id);
+
+      if (deleteErr) {
+        return NextResponse.json({ error: deleteErr.message }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true, action: 'deleted' });
+    }
 
     const { data, error } = await supabase
       .from('relationships')
-      .update({ status: newStatus })
+      .update({ status: 'accepted' })
       .eq('id', relationship_id)
       .select()
       .single();

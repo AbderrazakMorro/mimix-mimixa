@@ -16,7 +16,9 @@ type Props = {
   partnerAnswered: boolean;
 };
 
-export default function QuestionCard({ question, onAnswer, selectedAnswer, partnerAnswered }: Props) {
+import React, { memo } from 'react';
+
+function QuestionCard({ question, onAnswer, selectedAnswer, partnerAnswered }: Props) {
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -106,3 +108,5 @@ export default function QuestionCard({ question, onAnswer, selectedAnswer, partn
     </AnimatePresence>
   );
 }
+
+export default memo(QuestionCard);

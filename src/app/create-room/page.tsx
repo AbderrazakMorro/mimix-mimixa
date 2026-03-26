@@ -6,26 +6,37 @@ import { motion } from 'framer-motion';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import GlassCard from '@/components/ui/GlassCard';
 import RomanticButton from '@/components/ui/RomanticButton';
-import { Sparkles, Settings2 } from 'lucide-react';
+import { Sparkles, Settings2, Heart } from 'lucide-react';
+import { useProfile } from '@/contexts/ProfileContext';
 
 export default function CreateRoomPage() {
   const router = useRouter();
   const [includeAdult, setIncludeAdult] = useState(false);
   const [questionCount, setQuestionCount] = useState<10 | 20>(10);
   const [isCreating, setIsCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const { relationship, sendGameInvite } = useProfile() || {};
 
-  const handleCreate = (e: React.FormEvent) => {
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsCreating(true);
-    
-    setTimeout(() => {
-      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-      let result = '';
-      for (let i = 0; i < 6; i++) {
-        result += characters.charAt(Math.floor(Math.random() * characters.length));
-      }
-      router.push(`/room/${result}?adult=${includeAdult}&count=${questionCount}`);
-    }, 1200);
+    setError(null);
+
+    try {
+      const res = await fetch('/api/game/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ questionCount, includeAdult }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed to create room');
+
+      router.push(`/room/${data.roomCode}`);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setIsCreating(false);
+    }
   };
 
   if (isCreating) {
@@ -55,6 +66,12 @@ export default function CreateRoomPage() {
         </div>
         
         <form onSubmit={handleCreate} className="space-y-6">
+          {error && (
+            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-medium text-center">
+              {error}
+            </div>
+          )}
+          
           <div className="space-y-4">
             {/* +18 Toggle */}
             <motion.div whileHover={{ scale: 1.01 }} className="p-5 bg-white/80 rounded-2xl border border-pink-100 shadow-sm flex items-center justify-between">
@@ -81,6 +98,20 @@ export default function CreateRoomPage() {
           <RomanticButton type="submit" fullWidth>
             Generate Connection Link
           </RomanticButton>
+
+          {relationship && relationship.otherPerson && (
+            <div className="pt-4 border-t border-gray-100">
+              <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest text-center mb-3">Or Play with Partner</p>
+              <button
+                type="button"
+                onClick={() => sendGameInvite(relationship.otherPerson.id, { questionCount, includeAdult })}
+                className="w-full py-4 rounded-2xl bg-romantic-lavender/10 text-romantic-lavender border-2 border-romantic-lavender/20 font-black text-sm hover:bg-romantic-lavender/20 transition-all flex items-center justify-center gap-2 group shadow-sm"
+              >
+                <Heart size={18} fill="currentColor" className="group-hover:scale-110 transition-transform" />
+                Invite {relationship.otherPerson.display_name} to Play
+              </button>
+            </div>
+          )}
         </form>
         
         <div className="mt-6 text-center">

@@ -3,13 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, Heart } from 'lucide-react';
-import ChatUI from '@/components/ChatUI';
+import ChatUIV2 from '@/components/ChatUIV2';
 import { usePresence } from '@/hooks/usePresence';
+import { useProfile } from '@/contexts/ProfileContext';
 
 export default function FloatingChat() {
   const [isOpen, setIsOpen] = useState(false);
+  const { profile: myProfile } = useProfile();
   const [user, setUser] = useState<any>(null);
   const [partner, setPartner] = useState<any>(null);
+  const [conversationId, setConversationId] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -29,6 +32,17 @@ export default function FloatingChat() {
             const active = relationships.find((r: any) => r.status === 'accepted');
             if (active && mounted) {
               setPartner(active.otherPerson);
+              
+              // Get or create conversation
+              const convRes = await fetch('/api/chat/conversations', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type: 'private', partner_id: active.otherPerson.id })
+              });
+              if (convRes.ok) {
+                const { conversation } = await convRes.json();
+                if (mounted) setConversationId(conversation.id);
+              }
             }
           }
         }
@@ -53,15 +67,20 @@ export default function FloatingChat() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="mb-4 shadow-2xl rounded-2xl overflow-hidden"
+            className="mb-4 shadow-2xl rounded-3xl overflow-hidden"
           >
-            <ChatUI 
-              currentUserId={user.id} 
-              partnerId={partner.id} 
-              partnerName={partner.username}
-              partnerPublicKey={partner.public_key} 
-              onClose={() => setIsOpen(false)} 
-            />
+            {conversationId && (
+              <ChatUIV2 
+                conversationId={conversationId}
+                currentUserId={user.id} 
+                currentAvatarUrl={myProfile?.avatar_url}
+                partnerId={partner.id} 
+                partnerName={partner.display_name || partner.username}
+                partnerAvatarUrl={partner.avatar_url}
+                partnerPublicKey={partner.public_key} 
+                onClose={() => setIsOpen(false)} 
+              />
+            )}
           </motion.div>
         )}
       </AnimatePresence>
