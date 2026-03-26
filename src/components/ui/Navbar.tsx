@@ -97,7 +97,7 @@ export default function Navbar() {
                     <User size={16} className="text-white" />
                   )}
                 </div>
-                <div className="flex flex-col text-left">
+                <div className="hidden md:flex flex-col text-left">
                   <span className="text-[10px] font-black uppercase tracking-tighter leading-none text-gray-600">
                     My Profile
                   </span>
@@ -138,7 +138,7 @@ export default function Navbar() {
                   <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-sm shrink-0 bg-gray-200">
                     <User size={16} className="text-gray-400" />
                   </div>
-                  <div className="flex flex-col">
+                  <div className="hidden md:flex flex-col">
                     <span className="text-[10px] font-black uppercase tracking-tighter leading-none text-gray-600">
                       Sign In
                     </span>

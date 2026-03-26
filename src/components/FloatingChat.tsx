@@ -60,14 +60,14 @@ export default function FloatingChat() {
   if (!user || !partner) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
+    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end pb-[env(safe-area-inset-bottom)]">
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="mb-4 shadow-2xl rounded-3xl overflow-hidden"
+            className="fixed inset-0 z-[100] md:relative md:inset-auto md:mb-4 md:shadow-2xl md:rounded-3xl md:overflow-hidden bg-white/95 md:bg-transparent backdrop-blur-md"
           >
             {conversationId && (
               <ChatUIV2 

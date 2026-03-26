@@ -227,7 +227,7 @@ export default function ProfileModal({ isOpen, onClose }: { isOpen: boolean; onC
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 md:p-6">
+      <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center p-0 md:p-6">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -240,10 +240,10 @@ export default function ProfileModal({ isOpen, onClose }: { isOpen: boolean; onC
         {/* Modal */}
         <motion.div
           layoutId="profile-modal"
-          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          initial={{ scale: 0.9, opacity: 0, y: "100%" }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          className="relative w-full max-w-4xl bg-white/90 backdrop-blur-xl border border-white/40 shadow-2xl rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row h-[85vh] md:h-auto md:max-h-[85vh]"
+          exit={{ scale: 0.9, opacity: 0, y: "100%" }}
+          className="relative w-full max-w-4xl bg-white md:bg-white/90 backdrop-blur-xl border-t md:border border-white/40 shadow-2xl rounded-t-[2.5rem] rounded-b-none md:rounded-[2.5rem] overflow-hidden flex flex-col md:flex-row h-[90vh] md:h-auto md:max-h-[85vh] pb-[env(safe-area-inset-bottom)] z-10"
         >
           {/* Close Button */}
           <button

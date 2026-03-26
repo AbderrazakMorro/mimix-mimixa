@@ -94,7 +94,7 @@ export default function ChatUIV2({
   };
 
   return (
-    <GlassCard className={`flex flex-col w-full overflow-hidden p-0 relative shadow-2xl transition-all duration-300 ${fullHeight ? 'h-full' : 'h-[500px] max-h-[80vh] max-w-sm rounded-[2rem]'}`}>
+    <GlassCard className={`flex flex-col w-full overflow-hidden p-0 relative shadow-2xl transition-all duration-300 ${fullHeight ? 'h-full' : 'h-[100dvh] w-[100vw] rounded-none sm:h-[500px] sm:max-h-[80vh] sm:max-w-sm sm:rounded-[2rem] bg-white sm:bg-transparent z-50'}`}>
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-pink-100 bg-white/70 backdrop-blur-md z-10 shrink-0">
         <div className="flex items-center gap-3">
@@ -210,7 +210,7 @@ export default function ChatUIV2({
       </AnimatePresence>
 
       {/* Input UI */}
-      <form onSubmit={handleSend} className="p-4 bg-white/70 backdrop-blur-md border-t border-pink-100 z-30 shrink-0">
+      <form onSubmit={handleSend} className="p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-white/70 backdrop-blur-md border-t border-pink-100 z-30 shrink-0">
         <div className="flex items-center gap-2 bg-white rounded-3xl p-1.5 pr-3 shadow-sm border border-pink-100 focus-within:ring-4 focus-within:ring-romantic-pink/10 transition-all">
           <button 
             type="button" 
@@ -279,7 +279,7 @@ const MessageBubble = React.memo(function MessageBubble({
     >
       {/* Bubble */}
       <div className="relative group max-w-[80%]">
-        <div className={`px-4 py-2.5 rounded-[1.5rem] shadow-sm relative z-10 ${
+        <div className={`px-5 py-3 rounded-[1.5rem] shadow-sm relative z-10 ${
           isMe
             ? 'bg-gradient-to-br from-romantic-pink to-romantic-rose text-white rounded-br-none'
             : 'bg-white text-gray-800 rounded-bl-none border border-pink-50'
@@ -289,7 +289,7 @@ const MessageBubble = React.memo(function MessageBubble({
           ) : (
             <p className="text-sm font-medium leading-relaxed break-words">{msg.content}</p>
           )}
-          <span className={`text-[8px] mt-1 block font-bold uppercase tracking-tighter ${isMe ? 'text-pink-100' : 'text-gray-400'}`}>
+          <span className={`text-[8px] mt-1.5 block font-bold uppercase tracking-tighter ${isMe ? 'text-pink-100' : 'text-gray-400'}`}>
             {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>

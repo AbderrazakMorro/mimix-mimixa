@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
-import { Inter, Playfair_Display } from "next/font/google";
+// import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/components/ui/Navbar";
 
-const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
-const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800", "900"], variable: '--font-playfair' });
+// const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
+// const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800", "900"], variable: '--font-playfair' });
+const inter = { variable: '' };
+const playfair = { variable: '' };
 
 export const metadata: Metadata = {
   title: "MIMIX & MIMIXA - Premium Couples Game",
