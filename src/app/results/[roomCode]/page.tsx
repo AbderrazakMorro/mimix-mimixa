@@ -10,7 +10,8 @@ import GlassCard from '@/components/ui/GlassCard';
 import RomanticButton from '@/components/ui/RomanticButton';
 import { createClient } from '@/lib/supabase/client';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { ALL_QUESTIONS, Question } from '@/data/questions';
+import { ALL_QUESTIONS } from '@/data/questions';
+import { Question } from '@/types/game';
 
 // Heart-shaped Confetti
 const Confetti = () => {
