@@ -1,4 +1,4 @@
-import { Question } from './questions';
+import { Question } from '@/types/game';
 
 export const EXTRA_QUESTIONS_2: Question[] = [
   {

@@ -2,7 +2,8 @@
 
 import { useState, useEffect, use, useMemo, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { ALL_QUESTIONS, Question } from '@/data/questions';
+import { ALL_QUESTIONS } from '@/data/questions';
+import { Question } from '@/types/game';
 import QuestionCard from '@/components/QuestionCard';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { motion, AnimatePresence } from 'framer-motion';

@@ -1,10 +1,4 @@
-export type Question = {
-  category: string;
-  is_adult: boolean;
-  question_text: string;
-  options: string[];
-  correct_match_logic: string;
-};
+import { Question } from '@/types/game';
 
 import { EXTRA_QUESTIONS_1 } from './extra_questions_1';
 import { EXTRA_QUESTIONS_2 } from './extra_questions_2';
