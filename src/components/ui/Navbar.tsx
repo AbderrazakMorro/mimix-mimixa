@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, User, Home, Sparkles, LogOut, Gamepad2, X, Check, MessageSquare } from 'lucide-react';
+import { User, Home, Sparkles, LogOut, MessageSquare } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import ProfileModal from '@/components/profile/ProfileModal';
 
@@ -70,16 +70,18 @@ export default function Navbar() {
               </motion.div>
             </Link>
 
-            <Link href="/chat">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`p-2 sm:p-2.5 rounded-full transition-colors flex items-center gap-2 ${pathname === '/chat' ? 'bg-pink-100 text-romantic-pink' : 'text-gray-700 hover:bg-gray-200'}`}
-              >
-                <MessageSquare size={20} className="sm:w-[22px] sm:h-[22px]" />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden lg:block">Chat</span>
-              </motion.div>
-            </Link>
+            {profile && (
+              <Link href="/chat">
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`p-2 sm:p-2.5 rounded-full transition-colors flex items-center gap-2 ${pathname === '/chat' ? 'bg-pink-100 text-romantic-pink' : 'text-gray-700 hover:bg-gray-200'}`}
+                >
+                  <MessageSquare size={20} className="sm:w-[22px] sm:h-[22px]" />
+                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden lg:block">Chat</span>
+                </motion.div>
+              </Link>
+            )}
 
             {/* Profile button */}
             {profile ? (
@@ -164,53 +166,6 @@ export default function Navbar() {
       </nav>
 
       <AnimatePresence>
-        {pendingGameInvite && (
-          <motion.div
-            initial={{ opacity: 0, y: -50, x: '-50%', scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, x: '-50%', scale: 1 }}
-            exit={{ opacity: 0, y: -20, x: '-50%', scale: 0.95 }}
-            className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] w-[90%] max-w-sm"
-          >
-            <div className="bg-white/95 backdrop-blur-md border-2 border-romantic-pink/20 rounded-3xl p-4 shadow-2xl flex items-center gap-4 relative overflow-hidden group">
-              {/* Decorative background pulse */}
-              <div className="absolute inset-0 bg-gradient-to-r from-romantic-pink/5 to-romantic-lavender/5 animate-pulse" />
-              
-              <div className="relative z-10 w-12 h-12 rounded-2xl bg-romantic-pink/10 flex items-center justify-center shrink-0">
-                {pendingGameInvite.sender?.avatar_url ? (
-                  <img src={pendingGameInvite.sender.avatar_url} alt="" className="w-full h-full object-cover rounded-2xl shadow-sm" />
-                ) : (
-                  <Gamepad2 className="text-romantic-pink" size={24} />
-                )}
-                <div className="absolute -bottom-1 -right-1 bg-romantic-pink text-white p-1 rounded-full shadow-lg border-2 border-white">
-                  <Sparkles size={10} />
-                </div>
-              </div>
-
-              <div className="relative z-10 flex-1 min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-widest text-romantic-pink mb-0.5">Game Challenge!</p>
-                <h5 className="text-sm font-bold text-gray-800 truncate">
-                  {pendingGameInvite.sender?.display_name || 'Your partner'} wants to play
-                </h5>
-              </div>
-
-              <div className="relative z-10 flex gap-2">
-                <button
-                  onClick={() => declineGameInvite(pendingGameInvite.id)}
-                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                >
-                  <X size={20} />
-                </button>
-                <button
-                  onClick={() => acceptGameInvite(pendingGameInvite.id)}
-                  className="p-2 bg-romantic-pink text-white rounded-xl shadow-md hover:scale-105 transition-all flex items-center justify-center overflow-hidden"
-                >
-                  <Check size={20} />
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
         {showProfileModal && (
           <ProfileModal 
             isOpen={showProfileModal} 

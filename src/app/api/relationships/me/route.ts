@@ -24,8 +24,8 @@ export async function GET() {
       .from('relationships')
       .select(`
         id, status, created_at,
-        user:users!relationships_user_id_fkey(id, username, public_key, profiles(avatar_url, display_name)),
-        partner:users!relationships_partner_id_fkey(id, username, public_key, profiles(avatar_url, display_name))
+        user:users!relationships_user_id_fkey(id, username, public_key, profiles(avatar_url, display_name, bio)),
+        partner:users!relationships_partner_id_fkey(id, username, public_key, profiles(avatar_url, display_name, bio))
       `)
       .or(`user_id.eq.${payload.id},partner_id.eq.${payload.id}`)
       .order('created_at', { ascending: false });
@@ -38,16 +38,22 @@ export async function GET() {
     const mapped = data?.map((rel: any) => {
       const isInviter = rel.user.id === payload.id;
       const other = isInviter ? rel.partner : rel.user;
+      const p = other.profiles?.[0] || {};
       
-      // Flatten profile info into otherPerson
+      // Flatten profile info into otherPerson (explicit fields, no spread of raw join)
       const otherPerson = {
-        ...other,
-        avatar_url: other.profiles?.[0]?.avatar_url || other.avatar_url,
-        display_name: other.profiles?.[0]?.display_name || other.username
+        id: other.id,
+        username: other.username,
+        public_key: other.public_key,
+        avatar_url: p.avatar_url || null,
+        display_name: p.display_name || other.username || 'Partner',
+        bio: p.bio || null
       };
       
       return {
-        ...rel,
+        id: rel.id,
+        status: rel.status,
+        created_at: rel.created_at,
         isInviter,
         otherPerson
       };

@@ -62,30 +62,35 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   const [activeSentInvite, setActiveSentInvite] = useState<{ invite: any, roomCode: string } | null>(null);
 
   const refreshProfile = useCallback(async () => {
-    if (!user) {
-      setProfile(null);
-      setSettings(null);
-      setStats(null);
-      setLoading(false);
-      return;
-    }
     try {
       const data = await ProfileService.fetchProfileData();
-      setProfile(data.profile);
-      setSettings(data.settings);
-      setStats(data.stats);
-      setRelationship(data.relationship);
-      setIncomingInvites(data.incomingInvites);
-      setSentInvites(data.sentInvites);
+      if (!data.profile) {
+        setProfile(null);
+        setSettings(null);
+        setStats(null);
+        setRelationship(null);
+        setIncomingInvites([]);
+        setSentInvites([]);
+      } else {
+        setProfile(data.profile);
+        setSettings(data.settings);
+        setStats(data.stats);
+        setRelationship(data.relationship);
+        setIncomingInvites(data.incomingInvites);
+        setSentInvites(data.sentInvites);
+      }
     } catch (err) {
       console.error('Failed to fetch profile:', err);
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     refreshProfile();
+    const handle = () => refreshProfile();
+    window.addEventListener('userUpdated', handle);
+    return () => window.removeEventListener('userUpdated', handle);
   }, [refreshProfile]);
 
   // Sound Notification Logic

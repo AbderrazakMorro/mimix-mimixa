@@ -33,6 +33,7 @@ export default function SignupPage() {
         setError(data.error || 'Failed to sign up');
         setLoading(false);
       } else {
+        window.dispatchEvent(new Event('userUpdated'));
         router.push('/');
       }
     } catch (err: any) {

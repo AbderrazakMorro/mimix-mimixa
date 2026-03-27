@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
-// import { Inter, Playfair_Display } from "next/font/google";
+import { Inter, Playfair_Display, Almarai } from "next/font/google";
 import "./globals.css";
 
 import Navbar from "@/components/ui/Navbar";
 
-// const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
-// const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800", "900"], variable: '--font-playfair' });
-const inter = { variable: '' };
-const playfair = { variable: '' };
+const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
+const playfair = Playfair_Display({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800", "900"], variable: '--font-playfair' });
+const almarai = Almarai({ subsets: ["arabic"], weight: ["300", "400", "700", "800"], variable: '--font-almarai' });
 
 export const metadata: Metadata = {
   title: "MIMIX & MIMIXA - Premium Couples Game",
@@ -26,8 +25,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${playfair.variable} font-sans bg-gradient-to-br from-pink-50 via-rose-50 to-peach-50 text-gray-900 min-h-screen antialiased selection:bg-rose-300 selection:text-white`}>
+    <html lang="ar" dir="rtl">
+      <body className={`${inter.variable} ${playfair.variable} ${almarai.variable} font-almarai bg-gradient-to-br from-pink-50 via-rose-50 to-peach-50 text-gray-900 min-h-screen antialiased selection:bg-rose-300 selection:text-white`}>
         <BackgroundProvider>
           <ProfileProvider>
             <Navbar />

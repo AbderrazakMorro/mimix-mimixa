@@ -7,14 +7,16 @@ import { Question } from '@/types/game';
 import QuestionCard from '@/components/QuestionCard';
 import AnimatedBackground from '@/components/AnimatedBackground';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { Heart, Loader2, CheckCircle2, XCircle, User, Sparkles, Check } from 'lucide-react';
 import { useGameSession } from '@/hooks/useGameSession';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+
+import { useProfile } from '@/contexts/ProfileContext';
 
 export default function GamePage({ params }: { params: Promise<{ roomCode: string }> }) {
   const router = useRouter();
   const { roomCode } = use(params);
-  const { user, loading: userLoading } = useCurrentUser();
+  const { profile, relationship, loading: profileLoading } = useProfile();
 
   const {
     session,
@@ -25,14 +27,14 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
     submitAnswer,
   } = useGameSession({
     roomCode,
-    userId: user?.id ?? '',
+    userId: profile?.id ?? '',
   });
 
   // Identify players
-  const me = players.find(p => p.player_id === user?.id);
-  const partner = players.find(p => p.player_id !== user?.id);
-  const partnerName = partner?.profiles?.display_name || partner?.profiles?.username || "Partner";
-  const myName = me?.profiles?.display_name || me?.profiles?.username || "You";
+  const me = profile;
+  const partner = relationship?.otherPerson;
+  const partnerName = partner?.display_name || partner?.username || "Partner";
+  const myName = me?.display_name || me?.username || "You";
 
   const [playerAnswer, setPlayerAnswer] = useState<string | null>(null);
   const [showReveal, setShowReveal] = useState(false);
@@ -169,141 +171,170 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
     }
   }, [isSubmitting, playerAnswer, displayedQuestionIdx, submitAnswer, currentQuestion, triggerReveal]);
 
-  if (sessionLoading || userLoading || !session || !currentQuestion) {
+  if (sessionLoading || profileLoading || !session || !currentQuestion) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 overflow-hidden relative">
         <AnimatedBackground motif="hearts" intensity="low" />
-        <div className="glass-strong rounded-2xl p-8 text-center relative z-10">
+        <div className="glass-strong rounded-2xl p-8 text-center relative z-10 px-12 py-10 shadow-2xl">
           <Loader2 className="mx-auto text-romantic-pink w-10 h-10 animate-spin mb-4" />
-          <p className="text-gray-500 font-medium">Loading game...</p>
+          <p className="text-gray-500 font-bold text-sm">Initializing hearts...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 overflow-hidden relative">
+    <div className="min-h-screen bg-background flex flex-col items-center pt-20 pb-8 px-4 md:px-6 overflow-hidden relative">
       <AnimatedBackground motif="hearts" intensity="low" />
       
       {/* Header with Progress */}
       <motion.div 
-        initial={{ y: -50, opacity: 0 }}
+        initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="w-full max-w-xl mb-6 md:mb-8 flex flex-col gap-3 md:gap-4 relative z-10"
+        className="w-full max-w-xl mb-4 md:mb-8 flex flex-col gap-4 relative z-20"
       >
-        <div className="flex justify-between items-center glass p-4 md:p-5 rounded-2xl text-[10px] md:text-sm">
-          <div className="text-romantic-pink font-serif font-bold text-lg md:text-xl">
-            Room: <span className="tracking-widest">{roomCode}</span>
+        <div className="flex flex-col gap-2 glass p-3 md:p-5 rounded-[1.5rem] sm:rounded-[2rem] border border-white/40 shadow-xl backdrop-blur-xl">
+          <div className="flex justify-between items-center px-1">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 bg-romantic-pink/10 rounded-lg">
+                <Heart size={16} className="text-romantic-pink" fill="currentColor" />
+              </div>
+              <div className="text-romantic-pink font-serif font-black text-lg md:text-2xl tracking-tight">
+                Room <span className="tracking-widest uppercase ml-1 opacity-80">{roomCode}</span>
+              </div>
+            </div>
+            <div className="text-[9px] md:text-xs font-black uppercase tracking-[0.2em] text-gray-400 bg-white/60 px-3 py-1.5 rounded-full border border-white shadow-inner">
+              <span className="text-romantic-pink font-serif text-xs md:text-lg">{displayedQuestionIdx + 1}</span> / {QUESTIONS.length}
+            </div>
           </div>
-          <div className="text-gray-500 font-medium bg-white px-3 md:px-4 py-1.5 rounded-full shadow-inner">
-            {displayedQuestionIdx + 1} / {QUESTIONS.length}
+          
+          {/* Progress Bar Container */}
+          <div className="relative h-2 w-full bg-gray-100/50 rounded-full overflow-hidden shadow-inner border border-white/20">
+            <motion.div 
+              initial={{ width: 0 }}
+              animate={{ width: `${progressPercent}%` }}
+              transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
+              className="h-full bg-gradient-to-r from-romantic-pink via-romantic-rose to-romantic-peach rounded-full shadow-[0_0_10px_rgba(255,107,138,0.4)]"
+            />
           </div>
-        </div>
-        
-        {/* Progress Bar */}
-        <div className="h-2 w-full bg-white/50 rounded-full overflow-hidden shadow-inner backdrop-blur-md">
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: `${progressPercent}%` }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="h-full bg-gradient-to-r from-romantic-pink via-romantic-rose to-romantic-peach rounded-full"
-          />
         </div>
       </motion.div>
 
       {/* Question / Reveal */}
-      <div className="relative z-10 w-full flex justify-center">
+      <div className="relative z-10 w-full flex justify-center flex-1 min-h-0">
         <AnimatePresence mode="wait">
           {showReveal && revealData ? (
             <motion.div
               key={`reveal-${displayedQuestionIdx}`}
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, x: -100 }}
-              transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-              className="w-full max-w-lg glass-strong rounded-[2rem] p-6 md:p-8"
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
+              className="w-full max-w-xl glass-strong rounded-[2rem] p-5 md:p-10 shadow-3xl border border-white/50 relative overflow-hidden flex flex-col justify-center"
             >
+              {/* Decorative background glow */}
+              <div className={`absolute -top-20 -right-20 w-64 h-64 blur-3xl rounded-full opacity-20 pointer-events-none ${revealData.isMatch ? 'bg-emerald-400' : 'bg-orange-400'}`} />
+              <div className={`absolute -bottom-20 -left-20 w-64 h-64 blur-3xl rounded-full opacity-20 pointer-events-none ${revealData.isMatch ? 'bg-emerald-300' : 'bg-orange-300'}`} />
+
               {/* Match Badge */}
               <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: 'spring', stiffness: 300 }}
-                className="flex justify-center mb-6"
+                initial={{ scale: 0, rotate: -10 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ delay: 0.2, type: 'spring', damping: 12 }}
+                className="flex justify-center mb-4 sm:mb-8"
               >
                 {revealData.isMatch ? (
-                  <div className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-emerald-50 to-green-50 rounded-full border-2 border-emerald-200 shadow-md">
-                    <CheckCircle2 size={24} className="text-emerald-500" />
-                    <span className="text-emerald-700 font-bold text-lg">Match! 💕</span>
+                  <div className="flex items-center gap-2 px-6 py-2 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full text-white shadow-xl glow-emerald scale-90 sm:scale-100">
+                    <CheckCircle2 size={20} fill="white" className="text-emerald-500" />
+                    <span className="text-sm sm:text-lg font-black uppercase tracking-wider">Perfect Match! 💕</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-orange-50 to-amber-50 rounded-full border-2 border-orange-200 shadow-md">
-                    <XCircle size={24} className="text-orange-500" />
-                    <span className="text-orange-700 font-bold text-lg">Different! 🤷</span>
+                  <div className="flex items-center gap-2 px-6 py-2 bg-gradient-to-br from-orange-400 to-amber-500 rounded-full text-white shadow-xl glow-orange scale-90 sm:scale-100">
+                    <XCircle size={20} fill="white" className="text-orange-500" />
+                    <span className="text-sm sm:text-lg font-black uppercase tracking-wider">Different Vibes! 🤷‍♂️</span>
                   </div>
                 )}
               </motion.div>
 
-              <h3 className="text-center text-gray-500 font-medium text-sm uppercase tracking-wider mb-6">
-                Question {revealData.questionNumber}
-              </h3>
-
-              <h2 className="text-heading-md font-serif font-bold text-gray-800 mb-8 leading-relaxed text-center" dir="rtl">
+              <h2 className="text-base sm:text-2xl font-serif font-black text-gray-800 mb-6 sm:mb-10 leading-relaxed text-center drop-shadow-sm px-4" dir="rtl">
                 {revealData.questionText}
               </h2>
 
-              {/* Answers Side by Side */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Answers Grid */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-8 mb-6 sm:mb-10">
                 {/* Your Answer */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.4 }}
-                  className="flex flex-col items-center"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="flex flex-col items-center gap-2 sm:gap-4"
                 >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 shadow-md border-2 border-white overflow-hidden ${me?.profiles?.avatar_url ? 'bg-white' : 'bg-gradient-to-br from-romantic-pink to-romantic-rose'}`}>
-                    {me?.profiles?.avatar_url ? (
-                      <img src={me.profiles.avatar_url} alt="You" className="w-full h-full object-cover" />
-                    ) : (
-                      <Heart size={20} className="text-white" fill="currentColor" />
-                    )}
+                  <div className="relative">
+                    <div className="w-12 h-12 sm:w-20 sm:h-20 rounded-full bg-white border-2 sm:border-4 border-white shadow-xl overflow-hidden ring-2 sm:ring-4 ring-romantic-pink/10">
+                      {me?.avatar_url ? (
+                        <img src={me.avatar_url} alt="You" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-romantic-pink to-romantic-rose text-white">
+                          <User size={24} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-white p-0.5 sm:p-1 rounded-full shadow-md text-romantic-pink border border-pink-50">
+                      <Heart size={10} className="sm:w-3.5 sm:h-3.5" fill="currentColor" />
+                    </div>
                   </div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 truncate max-w-full">{myName}</span>
-                  <div className="w-full p-3 bg-pink-50 border-2 border-romantic-pink rounded-xl text-romantic-pink font-medium text-sm text-center" dir="rtl">
-                    {revealData.myAnswer}
+                  <div className="w-full flex flex-col items-center">
+                    <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">You Said</span>
+                    <div className="w-full p-2.5 sm:p-4 bg-white border border-pink-100 rounded-xl sm:rounded-2xl text-romantic-pink font-bold text-xs sm:text-sm text-center shadow-sm" dir="rtl">
+                      {revealData.myAnswer}
+                    </div>
                   </div>
                 </motion.div>
 
                 {/* Partner Answer */}
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3, duration: 0.4 }}
-                  className="flex flex-col items-center"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="flex flex-col items-center gap-2 sm:gap-4"
                 >
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 shadow-md border-2 border-white overflow-hidden ${partner?.profiles?.avatar_url ? 'bg-white' : 'bg-gradient-to-br from-romantic-lavender to-purple-300'}`}>
-                    {partner?.profiles?.avatar_url ? (
-                      <img src={partner.profiles.avatar_url} alt="Partner" className="w-full h-full object-cover" />
-                    ) : (
-                      <Heart size={20} className="text-white" fill="currentColor" />
-                    )}
+                  <div className="relative">
+                    <div className="w-12 h-12 sm:w-20 sm:h-20 rounded-full bg-white border-2 sm:border-4 border-white shadow-xl overflow-hidden ring-2 sm:ring-4 ring-romantic-lavender/10">
+                      {partner?.avatar_url ? (
+                        <img src={partner.avatar_url} alt="Partner" className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-romantic-lavender to-purple-400 text-white">
+                          <User size={24} />
+                        </div>
+                      )}
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 bg-white p-0.5 sm:p-1 rounded-full shadow-md text-romantic-lavender border border-purple-50">
+                      <Sparkles size={10} className="sm:w-3.5 sm:h-3.5" />
+                    </div>
                   </div>
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 truncate max-w-full">{partnerName}</span>
-                  <div className="w-full p-3 bg-purple-50 border-2 border-romantic-lavender rounded-xl text-romantic-lavender font-medium text-sm text-center" dir="rtl">
-                    {revealData.partnerAnswer}
+                  <div className="w-full flex flex-col items-center">
+                    <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-gray-400 mb-1">{partnerName} Said</span>
+                    <div className="w-full p-2.5 sm:p-4 bg-white border border-romantic-lavender/30 rounded-xl sm:rounded-2xl text-romantic-lavender font-bold text-xs sm:text-sm text-center shadow-sm" dir="rtl">
+                      {revealData.partnerAnswer}
+                    </div>
                   </div>
                 </motion.div>
               </div>
 
-              {/* Auto-advance indicator */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="mt-8 flex items-center justify-center gap-2 text-gray-400 text-sm font-medium"
-              >
-                <Loader2 size={14} className="animate-spin" />
-                <span>{session?.status === 'completed' ? 'Finalizing results...' : 'Next question coming...'}</span>
-              </motion.div>
+              {/* Auto-advance progress bar at bottom of card */}
+              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-100">
+                <motion.div
+                  initial={{ width: "100%" }}
+                  animate={{ width: "0%" }}
+                  transition={{ duration: 5, ease: "linear" }}
+                  className="h-full bg-romantic-pink"
+                />
+              </div>
+              
+              <div className="flex items-center justify-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest mt-2 overflow-hidden h-4">
+                <Loader2 size={10} className="animate-spin" />
+                <span>Next Question...</span>
+              </div>
             </motion.div>
           ) : (
             <QuestionCard 
@@ -319,49 +350,59 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
       
       {/* Footer Status Indicators */}
       <motion.div 
-        initial={{ y: 50, opacity: 0 }}
+        initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="w-full max-w-lg mt-8 md:mt-10 grid grid-cols-2 gap-3 md:gap-4 relative z-10"
+        transition={{ delay: 0.3 }}
+        className="w-full max-w-lg mt-6 grid grid-cols-2 gap-3 relative z-20"
       >
-        <div className={`flex flex-col items-center p-3 md:p-4 rounded-2xl backdrop-blur-md transition-all duration-300 ${playerAnswer ? 'glass-strong shadow-lg' : 'bg-white/40 border border-transparent'}`}>
-          <div className="relative group">
-            <motion.div
-              animate={playerAnswer ? { scale: [1, 1.1, 1] } : {}}
-              transition={{ repeat: playerAnswer ? Infinity : 0, duration: 1.2 }}
-              className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 border-white shadow-sm overflow-hidden ${me?.profiles?.avatar_url ? 'bg-white' : 'bg-gradient-to-br from-romantic-pink to-romantic-rose'}`}
-            >
-              {me?.profiles?.avatar_url ? (
-                <img src={me.profiles.avatar_url} alt="You" className="w-full h-full object-cover" />
+        <div className={`flex items-center gap-3 p-3 rounded-2xl transition-all duration-500 border-2 ${playerAnswer ? 'bg-white border-romantic-pink shadow-xl' : 'bg-white/40 border-white/50 border-dashed'}`}>
+          <div className="relative">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-md overflow-hidden ${me?.avatar_url ? 'bg-white' : 'bg-gradient-to-br from-romantic-pink to-romantic-rose'}`}>
+              {me?.avatar_url ? (
+                <img src={me.avatar_url} alt="You" className="w-full h-full object-cover" />
               ) : (
-                <Heart size={18} className={playerAnswer ? 'text-white' : 'text-gray-200'} fill={playerAnswer ? 'currentColor' : 'none'} />
+                <User size={18} className="text-white" />
               )}
-            </motion.div>
+            </div>
             {playerAnswer && (
-              <div className="absolute -top-1 -right-1 bg-green-400 w-3 h-3 md:w-4 md:h-4 rounded-full border-2 border-white shadow-sm animate-pulse" />
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1 -right-1 bg-green-400 text-white p-0.5 rounded-full shadow-lg border-2 border-white"
+              >
+                <Check size={8} strokeWidth={4} />
+              </motion.div>
             )}
           </div>
-          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2">{myName}</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-[9px] font-black uppercase tracking-widest text-gray-400">You</p>
+            <p className={`text-xs font-bold truncate ${playerAnswer ? 'text-gray-800' : 'text-gray-400'}`}>{playerAnswer ? 'Ready!' : 'Selecting...'}</p>
+          </div>
         </div>
 
-        <div className={`flex flex-col items-center p-3 md:p-4 rounded-2xl backdrop-blur-md transition-all duration-300 ${partnerAnswered ? 'glass-strong shadow-lg' : 'bg-white/40 border border-transparent'}`}>
-          <div className="relative group">
-            <motion.div
-              animate={partnerAnswered ? { scale: [1, 1.1, 1] } : {}}
-              transition={{ repeat: partnerAnswered ? Infinity : 0, duration: 1.2 }}
-              className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center border-2 border-white shadow-sm overflow-hidden ${partner?.profiles?.avatar_url ? 'bg-white' : 'bg-gradient-to-br from-romantic-lavender to-purple-300'}`}
-            >
-              {partner?.profiles?.avatar_url ? (
-                <img src={partner.profiles.avatar_url} alt="Partner" className="w-full h-full object-cover" />
+        <div className={`flex items-center gap-3 p-3 rounded-2xl transition-all duration-500 border-2 ${partnerAnswered ? 'bg-white border-romantic-lavender shadow-xl' : 'bg-white/40 border-white/50 border-dashed'}`}>
+          <div className="relative">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 border-white shadow-md overflow-hidden ${partner?.avatar_url ? 'bg-white' : 'bg-gradient-to-br from-romantic-lavender to-purple-400'}`}>
+              {partner?.avatar_url ? (
+                <img src={partner.avatar_url} alt="Partner" className="w-full h-full object-cover" />
               ) : (
-                <Heart size={18} className={partnerAnswered ? 'text-white' : 'text-pink-100'} fill={partnerAnswered ? 'currentColor' : 'none'} />
+                <User size={18} className="text-white" />
               )}
-            </motion.div>
+            </div>
             {partnerAnswered && (
-              <div className="absolute -top-1 -right-1 bg-green-400 w-3 h-3 md:w-4 md:h-4 rounded-full border-2 border-white shadow-sm animate-pulse" />
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute -top-1 -right-1 bg-green-400 text-white p-0.5 rounded-full shadow-lg border-2 border-white"
+              >
+                <Check size={8} strokeWidth={4} />
+              </motion.div>
             )}
           </div>
-          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2">{partnerName}</span>
+          <div className="flex-1 min-w-0">
+            <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 truncate">{partnerName}</p>
+            <p className={`text-xs font-bold truncate ${partnerAnswered ? 'text-gray-800' : 'text-gray-400'}`}>{partnerAnswered ? 'Ready!' : 'Thinking...'}</p>
+          </div>
         </div>
       </motion.div>
     </div>

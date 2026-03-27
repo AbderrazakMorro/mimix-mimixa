@@ -1,0 +1,9 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "logout": "Log Out"
+  },
+  "home": {
+    "title": "Hello World"
+  }
+}

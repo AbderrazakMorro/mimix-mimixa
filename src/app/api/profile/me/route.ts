@@ -14,35 +14,23 @@ export async function GET(request: NextRequest) {
 
     const supabase = createServerSupabase();
 
-    // Fetch Profile
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userTokenPayload.id)
-      .single();
+    // Fetch Profile, Settings, Stats in combination
+    const [
+      { data: profile, error: profileError },
+      { data: settings, error: settingsError },
+      { data: stats, error: statsError }
+    ] = await Promise.all([
+      supabase.from('profiles').select('*').eq('id', userTokenPayload.id).single(),
+      supabase.from('profile_settings').select('*').eq('user_id', userTokenPayload.id).single(),
+      supabase.from('user_stats').select('*').eq('user_id', userTokenPayload.id).single()
+    ]);
 
     if (profileError && profileError.code !== 'PGRST116') {
       console.error('Error fetching profile:', profileError);
     }
-
-    // Fetch Settings
-    const { data: settings, error: settingsError } = await supabase
-      .from('profile_settings')
-      .select('*')
-      .eq('user_id', userTokenPayload.id)
-      .single();
-
     if (settingsError && settingsError.code !== 'PGRST116') {
       console.error('Error fetching settings:', settingsError);
     }
-
-    // Fetch Stats
-    const { data: stats, error: statsError } = await supabase
-      .from('user_stats')
-      .select('*')
-      .eq('user_id', userTokenPayload.id)
-      .single();
-
     if (statsError && statsError.code !== 'PGRST116') {
       console.error('Error fetching stats:', statsError);
     }

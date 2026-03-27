@@ -33,6 +33,7 @@ export default function LoginPage() {
         setError(data.error || 'Failed to login');
         setLoading(false);
       } else {
+        window.dispatchEvent(new Event('userUpdated'));
         router.push('/');
       }
     } catch (err: any) {
