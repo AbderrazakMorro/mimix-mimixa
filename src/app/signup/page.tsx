@@ -33,7 +33,7 @@ export default function SignupPage() {
         setError(data.error || 'Failed to sign up');
         setLoading(false);
       } else {
-        router.push('/profile-setup');
+        router.push('/');
       }
     } catch (err: any) {
       setError(err.message);

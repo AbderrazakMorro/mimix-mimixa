@@ -33,7 +33,7 @@ export default function LoginPage() {
         setError(data.error || 'Failed to login');
         setLoading(false);
       } else {
-        router.push('/profile-setup');
+        router.push('/');
       }
     } catch (err: any) {
       setError(err.message);

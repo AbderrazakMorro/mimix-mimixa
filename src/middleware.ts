@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && isAuthPage) {
-    url.pathname = '/profile-setup';
+    url.pathname = '/';
     return NextResponse.redirect(url);
   }
 

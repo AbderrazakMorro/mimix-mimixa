@@ -89,7 +89,7 @@ export default function FloatingChat() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 bg-gradient-to-br from-romantic-pink to-romantic-rose rounded-full text-white shadow-lg flex items-center justify-center relative glow-pink cursor-pointer border-2 border-white"
+        className={`w-14 h-14 bg-gradient-to-br from-romantic-pink to-romantic-rose rounded-full text-white shadow-lg items-center justify-center relative glow-pink cursor-pointer border-2 border-white ${isOpen ? 'hidden md:flex' : 'flex'}`}
       >
         <MessageCircle size={24} fill={isOpen ? "currentColor" : "none"} />
         

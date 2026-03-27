@@ -254,7 +254,7 @@ export default function ProfileModal({ isOpen, onClose }: { isOpen: boolean; onC
           </button>
 
           {/* Sidebar */}
-          <div className="w-full md:w-1/3 bg-gray-50/50 p-8 border-r border-gray-100 flex flex-col">
+          <div className="w-full md:w-1/3 bg-gray-50/50 p-4 sm:p-8 border-r border-gray-100 flex flex-col">
             <h2 className="text-3xl font-serif font-bold text-gray-800 mb-8 flex items-center gap-3 font-playfair">
               <User className="text-romantic-pink" />
               My Profile
@@ -289,7 +289,7 @@ export default function ProfileModal({ isOpen, onClose }: { isOpen: boolean; onC
           </div>
 
           {/* Main Content Area */}
-          <div className="flex-1 p-8 md:p-12 overflow-y-auto custom-scrollbar bg-white/50">
+          <div className="flex-1 p-4 sm:p-8 md:p-12 overflow-y-auto custom-scrollbar bg-white/50">
             <div className="max-w-xl mx-auto">
               <AnimatePresence mode="wait">
                 {activeTab === 'profile' && (
@@ -452,8 +452,8 @@ export default function ProfileModal({ isOpen, onClose }: { isOpen: boolean; onC
                         <Loader2 className="animate-spin text-romantic-pink" />
                       </div>
                     ) : relationship ? (
-                      <div className="bg-gradient-to-br from-pink-50 to-purple-50 p-6 rounded-[2rem] border border-pink-100">
-                        <div className="flex items-center gap-6">
+                      <div className="bg-gradient-to-br from-pink-50 to-purple-50 p-4 sm:p-6 rounded-[2rem] border border-pink-100">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 text-center sm:text-left">
                           <div className="w-20 h-20 rounded-2xl bg-white border-2 border-pink-100 overflow-hidden shrink-0 shadow-sm">
                             {relationship.otherPerson.avatar_url ? (
                               <img src={relationship.otherPerson.avatar_url} alt="Partner" className="w-full h-full object-cover" />
@@ -471,10 +471,10 @@ export default function ProfileModal({ isOpen, onClose }: { isOpen: boolean; onC
                             <p className="text-xs text-gray-400 mt-2 uppercase tracking-widest font-bold">
                               Connected since {new Date(relationship.created_at).toLocaleDateString()}
                             </p>
-                            <div className="mt-4 flex gap-2">
+                            <div className="mt-4 flex flex-wrap justify-center sm:justify-start gap-2">
                               <button 
                                 onClick={() => sendGameInvite(relationship.otherPerson.id)}
-                                className="px-4 py-2 rounded-xl bg-romantic-pink text-white text-xs font-black uppercase tracking-wider shadow-sm hover:scale-105 transition-all flex items-center gap-2 group"
+                                className="px-4 py-2 rounded-xl bg-romantic-pink text-white text-xs font-black uppercase tracking-wider shadow-sm hover:scale-105 transition-all flex items-center justify-center gap-2 group"
                               >
                                 <Gamepad2 size={14} className="group-hover:rotate-12 transition-transform" />
                                 Play Game
@@ -482,7 +482,7 @@ export default function ProfileModal({ isOpen, onClose }: { isOpen: boolean; onC
                               
                               <button 
                                 onClick={startChat}
-                                className="px-4 py-2 rounded-xl bg-romantic-lavender/10 text-romantic-lavender border-2 border-romantic-lavender/20 text-xs font-black uppercase tracking-wider hover:bg-romantic-lavender/20 transition-all flex items-center gap-2 group"
+                                className="px-4 py-2 rounded-xl bg-romantic-lavender/10 text-romantic-lavender border-2 border-romantic-lavender/20 text-xs font-black uppercase tracking-wider hover:bg-romantic-lavender/20 transition-all flex items-center justify-center gap-2 group"
                               >
                                 <MessageSquare size={14} className="group-hover:scale-110 transition-transform" />
                                 Whisper

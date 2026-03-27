@@ -94,9 +94,9 @@ export default function ChatUIV2({
   };
 
   return (
-    <GlassCard className={`flex flex-col w-full overflow-hidden p-0 relative shadow-2xl transition-all duration-300 ${fullHeight ? 'h-full' : 'h-[100dvh] w-[100vw] rounded-none sm:h-[500px] sm:max-h-[80vh] sm:max-w-sm sm:rounded-[2rem] bg-white sm:bg-transparent z-50'}`}>
+    <GlassCard className={`flex flex-col w-full h-full overflow-hidden p-0 relative shadow-2xl transition-all duration-300 ${fullHeight ? 'h-full' : 'rounded-none sm:h-[600px] sm:max-h-[85vh] sm:max-w-md sm:rounded-[2.5rem] bg-[#FAFAFA] sm:bg-white/80 z-50'}`}>
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-pink-100 bg-white/70 backdrop-blur-md z-10 shrink-0">
+      <div className="flex items-center justify-between px-5 py-3 border-b border-pink-100 bg-white/80 backdrop-blur-xl z-10 shrink-0 shadow-sm">
         <div className="flex items-center gap-3">
           {onBack && (
             <button onClick={onBack} className="p-2 -ml-2 text-gray-400 hover:text-romantic-pink transition-colors">
@@ -128,7 +128,7 @@ export default function ChatUIV2({
       </div>
 
       {/* Messages Area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth bg-gradient-to-b from-white/20 to-pink-50/20 custom-scrollbar">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-5 scroll-smooth bg-[#FAFAFA] sm:bg-transparent custom-scrollbar">
         {loading && messages.length === 0 ? (
           <div className="w-full h-full flex flex-col items-center justify-center gap-4">
              <Loader2 className="animate-spin text-romantic-pink" size={32} />
@@ -210,40 +210,49 @@ export default function ChatUIV2({
       </AnimatePresence>
 
       {/* Input UI */}
-      <form onSubmit={handleSend} className="p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] bg-white/70 backdrop-blur-md border-t border-pink-100 z-30 shrink-0">
-        <div className="flex items-center gap-2 bg-white rounded-3xl p-1.5 pr-3 shadow-sm border border-pink-100 focus-within:ring-4 focus-within:ring-romantic-pink/10 transition-all">
-          <button 
-            type="button" 
-            onClick={() => setShowPicker(showPicker === 'emojis' ? null : 'emojis')}
-            className={`p-2.5 rounded-2xl transition-all ${showPicker === 'emojis' ? 'bg-romantic-pink text-white rotate-12' : 'text-gray-400 hover:text-romantic-pink hover:bg-pink-50'}`}
-          >
-            <Smile size={20} />
-          </button>
-          <button 
-            type="button" 
-            onClick={() => setShowPicker(showPicker === 'stickers' ? null : 'stickers')}
-            className={`p-2.5 rounded-2xl transition-all ${showPicker === 'stickers' ? 'bg-romantic-pink text-white rotate-12' : 'text-gray-400 hover:text-romantic-pink hover:bg-pink-50'}`}
-          >
-            <Sticker size={20} />
-          </button>
+      <div className="p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] bg-gradient-to-t from-white via-white/95 to-transparent backdrop-blur-lg z-30 shrink-0 border-t border-pink-50/50">
+        <form onSubmit={handleSend} className="max-w-3xl mx-auto flex items-end gap-2 bg-white rounded-[2rem] p-1.5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100 focus-within:ring-4 focus-within:ring-romantic-pink/10 transition-all">
+          <div className="flex gap-1">
+            <button 
+              type="button" 
+              onClick={() => setShowPicker(showPicker === 'emojis' ? null : 'emojis')}
+              className={`p-2.5 rounded-full transition-all ${showPicker === 'emojis' ? 'bg-romantic-pink text-white scale-110' : 'text-gray-400 hover:text-romantic-pink hover:bg-pink-50'}`}
+            >
+              <Smile size={20} />
+            </button>
+            <button 
+              type="button" 
+              onClick={() => setShowPicker(showPicker === 'stickers' ? null : 'stickers')}
+              className={`p-2.5 rounded-full transition-all hidden sm:flex ${showPicker === 'stickers' ? 'bg-romantic-pink text-white scale-110' : 'text-gray-400 hover:text-romantic-pink hover:bg-pink-50'}`}
+            >
+              <Sticker size={20} />
+            </button>
+          </div>
           
-          <input
-            type="text"
+          <textarea
             value={inputText}
-            onChange={handleInputChange}
+            onChange={(e: any) => handleInputChange(e)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend(e as unknown as React.FormEvent);
+              }
+            }}
             placeholder="Type a loving message..."
-            className="flex-1 bg-transparent border-none focus:outline-none text-sm font-medium text-gray-700 placeholder-gray-400 py-2 ml-1"
+            rows={1}
+            className="flex-1 bg-transparent border-none focus:outline-none text-[15px] font-medium text-gray-700 placeholder-gray-400 py-3 ml-2 resize-none max-h-32 min-h-[44px] custom-scrollbar"
+            style={{ height: 'auto' }}
           />
           
           <button 
             type="submit"
             disabled={!inputText.trim() || loading}
-            className="w-10 h-10 rounded-2xl bg-gradient-to-br from-romantic-pink to-romantic-rose text-white flex items-center justify-center disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed hover:shadow-lg hover:scale-105 transition-all shadow-md active:scale-95"
+            className="w-11 h-11 rounded-full shrink-0 bg-gradient-to-tr from-romantic-pink to-romantic-lavender text-white flex items-center justify-center disabled:opacity-40 disabled:scale-100 disabled:cursor-not-allowed hover:shadow-lg hover:scale-105 transition-all shadow-md active:scale-95 mb-0.5 mr-0.5"
           >
-            {loading ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} className="translate-x-0.5 -translate-y-0.5" />}
+            {loading ? <Loader2 className="animate-spin" size={18} /> : <Send size={18} className="translate-x-0.5" />}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </GlassCard>
   );
 }
@@ -278,18 +287,18 @@ const MessageBubble = React.memo(function MessageBubble({
       className={`flex items-end gap-2 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}
     >
       {/* Bubble */}
-      <div className="relative group max-w-[80%]">
-        <div className={`px-5 py-3 rounded-[1.5rem] shadow-sm relative z-10 ${
+      <div className="relative group max-w-[85%] sm:max-w-[75%]">
+        <div className={`px-4 py-3 sm:px-5 sm:py-3.5 rounded-[1.25rem] shadow-sm relative z-10 ${
           isMe
-            ? 'bg-gradient-to-br from-romantic-pink to-romantic-rose text-white rounded-br-none'
-            : 'bg-white text-gray-800 rounded-bl-none border border-pink-50'
+            ? 'bg-gradient-to-tr from-romantic-pink to-romantic-lavender text-white rounded-br-md shadow-[0_4px_14px_rgb(255,107,158,0.25)]'
+            : 'bg-white text-gray-800 rounded-bl-md border border-gray-100 shadow-[0_2px_10px_rgb(0,0,0,0.02)]'
         }`}>
           {msg.message_type === 'sticker' ? (
             <img src={msg.content} alt="sticker" className="w-32 h-32 object-contain" />
           ) : (
-            <p className="text-sm font-medium leading-relaxed break-words">{msg.content}</p>
+            <p className="text-[15px] font-medium leading-[1.4] break-words whitespace-pre-wrap">{msg.content}</p>
           )}
-          <span className={`text-[8px] mt-1.5 block font-bold uppercase tracking-tighter ${isMe ? 'text-pink-100' : 'text-gray-400'}`}>
+          <span className={`text-[9px] mt-1.5 block font-bold uppercase tracking-wider opacity-80 ${isMe ? 'text-white' : 'text-gray-400'}`}>
             {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         </div>
