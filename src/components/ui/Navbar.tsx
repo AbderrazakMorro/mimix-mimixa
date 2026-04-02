@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { User, Heart, Bell, LogOut } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import ProfileModal from '@/components/profile/ProfileModal';
+import InstallPrompt from '@/components/ui/InstallPrompt';
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -98,6 +99,9 @@ export default function Navbar() {
                 </button>
               </>
             )}
+
+            {/* Install App Button */}
+            <InstallPrompt />
 
             {/* Avatar */}
             {profile ? (

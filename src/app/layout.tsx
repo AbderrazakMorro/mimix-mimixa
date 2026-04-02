@@ -11,6 +11,20 @@ const almarai = Almarai({ subsets: ["arabic"], weight: ["300", "400", "700", "80
 export const metadata: Metadata = {
   title: "MIMIX & MIMIXA - Premium Couples Game",
   description: "Test your romantic compatibility in this beautifully designed multiplayer experience.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Mimixa",
+  },
+};
+
+export const viewport: import("next").Viewport = {
+  themeColor: "#E8677D",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 import { BackgroundProvider } from "@/components/BackgroundContext";

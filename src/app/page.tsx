@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Heart, Users, Sparkles, MessageSquare, Home, Lock, Gamepad2, Plus, Settings, Calendar, Gift, Shield, HelpCircle, Play } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
+import HeroInstallButton from '@/components/ui/HeroInstallButton';
+import SidebarInstallButton from '@/components/ui/SidebarInstallButton';
 
 export default function HomePage() {
   const router = useRouter();
@@ -114,6 +116,8 @@ export default function HomePage() {
               <Plus size={16} className="group-hover:rotate-90 transition-transform" />
               <span>New Memory</span>
             </button>
+            
+            <SidebarInstallButton />
 
             {/* Support & Privacy */}
             <div className="flex flex-col gap-1 mt-2 px-1">
@@ -175,6 +179,9 @@ export default function HomePage() {
               >
                 Your Private Universe
               </motion.p>
+              
+              {/* Install App CTA (only shows if not installed) */}
+              <HeroInstallButton />
             </motion.div>
 
             {/* ═══ COUPLE CARD ═══ */}
