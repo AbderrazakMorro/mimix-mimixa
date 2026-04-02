@@ -78,7 +78,7 @@ export default function HomePage() {
         {/* ══════════════════════════════
             DESKTOP SIDEBAR
             ══════════════════════════════ */}
-        <aside className="hidden lg:flex flex-col w-[15rem] shrink-0 pt-24 pb-6 px-5 border-r border-[#F0D8DE]/50">
+        <aside className="hidden lg:flex flex-col w-[15rem] shrink-0 pt-24 pb-6 px-5 border-r border-[#F0D8DE]/50 relative z-20">
 
           {/* Sanctuary header */}
           <div className="mb-6 px-1">
@@ -94,10 +94,10 @@ export default function HomePage() {
           {/* Nav links */}
           <nav className="flex flex-col gap-1">
             {sidebarNav.map((item) => (
-              <Link
+              <a
                 key={item.label}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all ${
+                className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-[13px] font-semibold transition-all cursor-pointer ${
                   item.active
                     ? 'bg-[#E8677D]/10 text-[#E8677D] border border-[#E8677D]/15'
                     : 'text-[#C08894] hover:bg-white/60 hover:text-[#A06070]'
@@ -105,14 +105,14 @@ export default function HomePage() {
               >
                 <item.icon size={17} />
                 <span>{item.label}</span>
-              </Link>
+              </a>
             ))}
           </nav>
 
           {/* Bottom section */}
           <div className="mt-auto flex flex-col gap-3">
             {/* New Memory button */}
-            <button className="flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-[#E8677D] to-[#F08090] text-white text-sm font-bold shadow-md shadow-[#E8677D]/20 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all group">
+            <button className="flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-[#E8677D] to-[#F08090] text-white text-sm font-bold shadow-md shadow-[#E8677D]/20 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all group cursor-pointer">
               <Plus size={16} className="group-hover:rotate-90 transition-transform" />
               <span>New Memory</span>
             </button>
@@ -121,12 +121,16 @@ export default function HomePage() {
 
             {/* Support & Privacy */}
             <div className="flex flex-col gap-1 mt-2 px-1">
-              <Link href="#support" className="flex items-center gap-2 text-[12px] text-[#D4868F] font-medium hover:text-[#C06070] transition-colors py-1">
-                <HelpCircle size={14} />
+              <Link href="/support" className="flex items-center gap-2 text-[12px] text-[#D4868F] font-medium hover:text-[#E8677D] transition-all py-1.5 cursor-pointer group">
+                <div className="p-1 rounded-md bg-transparent group-hover:bg-[#E8677D]/10 transition-colors">
+                  <HelpCircle size={15} />
+                </div>
                 <span>Support</span>
               </Link>
-              <Link href="#privacy" className="flex items-center gap-2 text-[12px] text-[#D4868F] font-medium hover:text-[#C06070] transition-colors py-1">
-                <Shield size={14} />
+              <Link href="/privacy" className="flex items-center gap-2 text-[12px] text-[#D4868F] font-medium hover:text-[#E8677D] transition-all py-1.5 cursor-pointer group">
+                <div className="p-1 rounded-md bg-transparent group-hover:bg-[#E8677D]/10 transition-colors">
+                  <Shield size={15} />
+                </div>
                 <span>Privacy</span>
               </Link>
             </div>

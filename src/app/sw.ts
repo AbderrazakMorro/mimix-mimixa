@@ -2,6 +2,7 @@
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry } from "@serwist/precaching";
 import { installSerwist } from "@serwist/sw";
+import { NetworkFirst } from "serwist";
 
 declare global {
   interface WorkerGlobalScope {
@@ -16,5 +17,15 @@ installSerwist({
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: [
+    // Apply Network First strategy for all Page navigations and API requests
+    {
+      matcher: ({ request, url }) => request.mode === 'navigate' || url.pathname.startsWith('/api/'),
+      handler: new NetworkFirst({
+        cacheName: 'mimix-network-first',
+        networkTimeoutSeconds: 5,
+      }),
+    },
+    ...defaultCache,
+  ],
 });

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 export default function HeroInstallButton() {
-  const { isInstallable, isIosSafari, handleInstallClick } = usePWAInstall();
+  const { isInstallable, isIosSafari, showFallback, handleInstallClick } = usePWAInstall();
 
   if (!isInstallable) return null;
 
@@ -17,11 +17,15 @@ export default function HeroInstallButton() {
         transition={{ delay: 0.5 }}
         className="flex justify-center mb-6 sm:mb-10 w-full"
       >
-        {isIosSafari ? (
-          <div className="flex flex-col items-center bg-white/60 backdrop-blur-md px-6 py-3 rounded-2xl border border-[#E8677D]/20 shadow-sm text-center">
-             <span className="text-xs sm:text-sm font-semibold text-[#8B3F5A] mb-1">Install Mimixa To Your Phone</span>
-             <span className="text-[10px] sm:text-xs text-[#A06070]">Tap "Share" <span className="inline-block border border-current rounded px-1 mx-0.5">↑</span> then "Add to Home Screen"</span>
-          </div>
+        {isIosSafari || showFallback ? (
+          <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center bg-white/80 backdrop-blur-md px-6 py-3 rounded-2xl border border-[#E8677D]/20 shadow-md text-center">
+             <span className="text-xs sm:text-sm font-semibold text-[#8B3F5A] mb-1">Install Mimixa App</span>
+             {isIosSafari ? (
+               <span className="text-[10px] sm:text-xs text-[#A06070]">Tap "Share" <span className="inline-block border border-current rounded px-1 mx-0.5">↑</span> then "Add to Home Screen"</span>
+             ) : (
+               <span className="text-[10px] sm:text-xs text-[#A06070]">Tap your browser menu (⋮) and select "Install App"</span>
+             )}
+          </motion.div>
         ) : (
           <button
             onClick={handleInstallClick}

@@ -7,9 +7,11 @@ export function usePWAInstall() {
   const [isStandalone, setIsStandalone] = useState(false);
   const [isIosSafari, setIsIosSafari] = useState(false);
 
+  const [showFallback, setShowFallback] = useState(false);
+
   useEffect(() => {
     // Check if already in standalone mode
-    if (window.matchMedia('(display-mode: standalone)').matches) {
+    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
       setIsStandalone(true);
     }
 
@@ -32,22 +34,27 @@ export function usePWAInstall() {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setDeferredPrompt(null);
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    } else {
+      // Show fallback instruction if browser blocks the prompt or doesn't support it
+      setShowFallback(true);
+      setTimeout(() => setShowFallback(false), 5000);
     }
   };
 
-  // The app is installable automatically if we have a deferred prompt,
-  // OR if we are on iOS Safari where we can show a tooltip instead.
-  const isInstallable = !isStandalone && (!!deferredPrompt || isIosSafari);
+  // Always show the option if we are NOT in standalone mode
+  const isInstallable = !isStandalone;
 
   return {
     deferredPrompt,
     isStandalone,
     isIosSafari,
+    showFallback,
     isInstallable,
     handleInstallClick
   };

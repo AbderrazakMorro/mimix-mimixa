@@ -4,15 +4,19 @@ import { Download } from 'lucide-react';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 
 export default function SidebarInstallButton() {
-  const { isInstallable, isIosSafari, handleInstallClick } = usePWAInstall();
+  const { isInstallable, isIosSafari, showFallback, handleInstallClick } = usePWAInstall();
 
   if (!isInstallable) return null;
 
-  if (isIosSafari) {
+  if (isIosSafari || showFallback) {
     return (
       <div className="flex flex-col items-center bg-white/60 px-3 py-2.5 rounded-2xl border border-[#E8677D]/20 shadow-sm text-center">
         <span className="text-[11px] font-semibold text-[#8B3F5A] mb-0.5">Install App</span>
-        <span className="text-[9px] text-[#A06070] leading-tight">Tap Share <span className="inline-block border border-current rounded px-0.5">↑</span> then "Add to Home Screen"</span>
+        {isIosSafari ? (
+          <span className="text-[9px] text-[#A06070] leading-tight">Tap Share <span className="inline-block border border-current rounded px-0.5">↑</span> then "Add Home Screen"</span>
+        ) : (
+          <span className="text-[9px] text-[#A06070] leading-tight">Tap browser menu (⋮) &rarr; Install App</span>
+        )}
       </div>
     );
   }
