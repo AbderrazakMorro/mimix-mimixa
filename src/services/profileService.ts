@@ -97,7 +97,7 @@ export const ProfileService = {
               const data = await this.fetchUserBasicProfile(invite.sender_id);
               onInvitePending({ ...invite, sender: data.user });
             } catch (err) {
-              console.error(err);
+              console.error('Failed to fetch user profile for invite');
             }
           }
         }

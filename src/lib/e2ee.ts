@@ -79,7 +79,7 @@ export async function decryptMessage(encryptedObj: { iv: string; cipherText: str
     const decrypted = await window.crypto.subtle.decrypt({ name: 'AES-GCM', iv }, aesKey, cipherText);
     return new TextDecoder().decode(decrypted);
   } catch (err) {
-    console.error('Decryption failed', err);
+    console.error('Decryption failed');
     return '🔒 [Encrypted Message]';
   }
 }

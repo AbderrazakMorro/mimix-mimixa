@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Home, Sparkles, LogOut, MessageSquare } from 'lucide-react';
+import { User, Heart, Bell, LogOut } from 'lucide-react';
 import { useProfile } from '@/contexts/ProfileContext';
 import ProfileModal from '@/components/profile/ProfileModal';
 
@@ -14,9 +14,6 @@ export default function Navbar() {
     profile, 
     loading: profileLoading, 
     incomingInvites,
-    pendingGameInvite,
-    acceptGameInvite,
-    declineGameInvite
   } = useProfile();
   const [scrolled, setScrolled] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
@@ -39,126 +36,88 @@ export default function Navbar() {
   };
 
   const isAuthPage = pathname === '/login' || pathname === '/signup';
+  if (isAuthPage) return null;
+
+  const navLinks = [
+    { label: 'Our Story', href: '/' },
+    { label: 'Gallery', href: '/gallery' },
+    { label: 'Shared Goals', href: '/goals' },
+  ];
 
   return (
     <>
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-2 sm:px-4 md:px-6 py-3 sm:py-4 ${scrolled ? 'mt-0' : 'mt-1 sm:mt-2'}`}>
-        <div className={`max-w-5xl mx-auto flex items-center justify-between px-4 sm:px-6 py-2.5 sm:py-3 rounded-full transition-all duration-300 ${scrolled ? 'bg-white/95 shadow-lg border-white' : 'glass-strong border-white/40'}`}>
+      <nav 
+        dir="ltr"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 px-4 md:px-8 py-3 ${scrolled ? 'bg-white/80 backdrop-blur-lg shadow-sm' : ''}`}
+      >
+        <div className="max-w-[1400px] mx-auto flex items-center justify-between">
           {/* Brand */}
-          <Link href="/" className="flex items-center gap-1.5 sm:gap-2 group">
-            <motion.div 
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-8 h-8 sm:w-10 sm:h-10 bg-white rounded-full flex items-center justify-center shadow-md border border-pink-100 overflow-hidden shrink-0"
-            >
-              <img src="/assets/logo.png" alt="Mimix Logo" className="w-full h-full object-contain p-1" />
-            </motion.div>
-            <span className="font-serif font-black text-base sm:text-lg md:text-xl text-transparent bg-clip-text bg-gradient-to-r from-romantic-pink to-romantic-lavender hidden xs:block">
+          <Link href="/" className="flex items-center gap-2 group shrink-0">
+            <span className="font-serif font-black text-lg md:text-xl text-transparent bg-clip-text bg-gradient-to-r from-[#E8677D] to-[#D4576A]">
               Mimix & Mimixa
             </span>
           </Link>
 
-          {/* Navigation Actions */}
-          <div className="flex items-center gap-1.5 sm:gap-4">
-            <Link href="/">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className={`p-2 sm:p-2.5 rounded-full transition-colors flex items-center gap-2 ${pathname === '/' ? 'bg-pink-100 text-romantic-pink' : 'text-gray-700 hover:bg-gray-200'}`}
+          {/* Center Navigation */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map(link => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`relative text-sm font-semibold transition-colors py-1 ${
+                  pathname === link.href 
+                    ? 'text-[#E8677D]' 
+                    : 'text-gray-500 hover:text-gray-800'
+                }`}
               >
-                <Home size={20} className="sm:w-[22px] sm:h-[22px]" />
-                <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden lg:block">Home</span>
-              </motion.div>
-            </Link>
-
-            {profile && (
-              <Link href="/chat">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className={`p-2 sm:p-2.5 rounded-full transition-colors flex items-center gap-2 ${pathname === '/chat' ? 'bg-pink-100 text-romantic-pink' : 'text-gray-700 hover:bg-gray-200'}`}
-                >
-                  <MessageSquare size={20} className="sm:w-[22px] sm:h-[22px]" />
-                  <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider hidden lg:block">Chat</span>
-                </motion.div>
+                {link.label}
+                {pathname === link.href && (
+                  <motion.div 
+                    layoutId="nav-underline"
+                    className="absolute -bottom-0.5 left-0 right-0 h-[2px] bg-[#E8677D] rounded-full" 
+                  />
+                )}
               </Link>
+            ))}
+          </div>
+
+          {/* Right Actions */}
+          <div className="flex items-center gap-3">
+            {profile && (
+              <>
+                <button className="relative p-2 rounded-full text-[#E8677D] hover:bg-pink-50 transition-colors">
+                  <Heart size={20} fill="currentColor" strokeWidth={0} />
+                </button>
+                <button className="relative p-2 rounded-full text-gray-500 hover:bg-gray-100 transition-colors">
+                  <Bell size={20} />
+                  {incomingInvites.length > 0 && (
+                    <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-[#E8677D] text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                      {incomingInvites.length}
+                    </span>
+                  )}
+                </button>
+              </>
             )}
 
-            {/* Profile button */}
+            {/* Avatar */}
             {profile ? (
-              <>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setShowProfileModal(true)}
-                className={`flex items-center gap-1.5 p-1 sm:p-1.5 pr-3 sm:pr-4 rounded-full transition-all border-2 border-white/50 bg-white/30 hover:bg-white/60`}
-              >
-                <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-sm shrink-0 ${profile.avatar_url ? 'bg-white' : 'bg-gradient-to-br from-romantic-pink to-romantic-rose'}`}>
-                  {profile.avatar_url ? (
-                    <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
-                  ) : (
-                    <User size={16} className="text-white" />
-                  )}
-                </div>
-                <div className="hidden md:flex flex-col text-left">
-                  <span className="text-[10px] font-black uppercase tracking-tighter leading-none text-gray-600">
-                    My Profile
-                  </span>
-                  <span className="text-[10px] text-romantic-pink font-bold truncate max-w-[80px] leading-tight">
-                    {profile.display_name || profile.username}
-                  </span>
-                </div>
-                
-                {/* Notification Badge */}
-                {incomingInvites.length > 0 && (
-                  <motion.div 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-romantic-pink text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white shadow-sm ring-2 ring-pink-100 animate-pulse"
-                  >
-                    {incomingInvites.length}
-                  </motion.div>
-                )}
-              </motion.button>
-
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleLogout}
-                title="Logout"
-                className="p-2 sm:p-2.5 rounded-full text-gray-500 hover:text-red-500 hover:bg-red-50 transition-all border-2 border-transparent hover:border-red-100 shrink-0"
+                onClick={() => setShowProfileModal(true)}
+                className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-md shrink-0"
               >
-                <LogOut size={20} />
+                {profile.avatar_url ? (
+                  <img src={profile.avatar_url} alt="Profile" className="w-full h-full object-cover" />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#E8677D] to-[#B5456A] flex items-center justify-center">
+                    <User size={16} className="text-white" />
+                  </div>
+                )}
               </motion.button>
-            </>
-          ) : !profileLoading && (
-              <Link href="/login">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center gap-1.5 p-1 sm:p-1.5 pr-3 sm:pr-4 rounded-full transition-all border-2 border-white/50 bg-white/30 hover:bg-white/60"
-                >
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-sm shrink-0 bg-gray-200">
-                    <User size={16} className="text-gray-400" />
-                  </div>
-                  <div className="hidden md:flex flex-col">
-                    <span className="text-[10px] font-black uppercase tracking-tighter leading-none text-gray-600">
-                      Sign In
-                    </span>
-                  </div>
-                </motion.div>
-              </Link>
-            )}
-
-            {!profile && !profileLoading && !isAuthPage && (
-              <Link href="/signup">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="hidden sm:flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-gradient-to-r from-romantic-pink to-romantic-rose text-white text-xs font-bold shadow-md glow-pink"
-                >
-                  <Sparkles size={14} />
-                  Join Us
-                </motion.div>
+            ) : !profileLoading && (
+              <Link href="/login" className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#E8677D] text-white text-sm font-semibold hover:bg-[#d6596d] transition-colors">
+                Sign In
               </Link>
             )}
           </div>

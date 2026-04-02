@@ -80,7 +80,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         setSentInvites(data.sentInvites);
       }
     } catch (err) {
-      console.error('Failed to fetch profile:', err);
+      console.error('Failed to fetch profile');
     } finally {
       setLoading(false);
     }
@@ -153,7 +153,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
         setActiveSentInvite({ invite: data.invite, roomCode: data.roomCode });
       }
     } catch (err) {
-      console.error('Failed to send game invite:', err);
+      console.error('Failed to send game invite');
     }
   };
 
@@ -163,7 +163,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       setPendingGameInvite(null);
       if (data?.roomCode) window.location.href = `/room/${data.roomCode}`;
     } catch (err) {
-      console.error('Failed to accept game invite:', err);
+      console.error('Failed to accept game invite');
     }
   };
 
@@ -172,7 +172,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       await ProfileService.respondToGameInvite(inviteId, 'decline');
       setPendingGameInvite(null);
     } catch (err) {
-      console.error('Failed to decline game invite:', err);
+      console.error('Failed to decline game invite');
     }
   };
 
@@ -182,7 +182,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       await ProfileService.respondToGameInvite(activeSentInvite.invite.id, 'decline');
       setActiveSentInvite(null);
     } catch (err) {
-      console.error('Failed to cancel game invite:', err);
+      console.error('Failed to cancel game invite');
     }
   };
 
@@ -192,7 +192,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       setProfile((prev) => (prev ? { ...prev, ...data.profile } : data.profile));
       return true;
     } catch (err) {
-      console.error('Failed to update profile:', err);
+      console.error('Failed to update profile');
       return false;
     }
   };
@@ -205,7 +205,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       }
       return true;
     } catch (err) {
-      console.error('Failed to update settings:', err);
+      console.error('Failed to update settings');
       return false;
     }
   };

@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
     const supabase = createServerSupabase();
 
     // Verify session exists and is in progress
+    // Verify session exists and is in progress
     const { data: session, error: sessionError } = await supabase
       .from('game_sessions')
       .select('*')
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (sessionError || !session) {
-      console.error('Session not found error:', sessionError);
+      console.error('Session not found [Answer]');
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (!playerCheck) {
-      console.error('Player not in session:', { sessionId, userId: user.id });
+      console.error('Access denied: Player not in session');
       return NextResponse.json({ error: 'Player not in this session' }, { status: 403 });
     }
 
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
       if (answerError.code === '23505') {
         return NextResponse.json({ error: 'Already answered this question' }, { status: 409 });
       }
-      console.error('Answer insert error details:', JSON.stringify(answerError, null, 2));
+      console.error('Failed to insert answer');
       return NextResponse.json({ error: 'Failed to submit answer' }, { status: 500 });
     }
 
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ bothAnswered: false });
   } catch (err) {
-    console.error('Answer error:', err);
+    console.error('Unexpected error in answer submission');
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

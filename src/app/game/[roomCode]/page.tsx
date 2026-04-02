@@ -25,6 +25,7 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
     partnerAnswered,
     partnerAnswer,
     submitAnswer,
+    refetch,
   } = useGameSession({
     roomCode,
     userId: profile?.id ?? '',
@@ -46,7 +47,7 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
     myAnswer: string;
   } | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   // Track which question index we're currently displaying/answering
   const [displayedQuestionIdx, setDisplayedQuestionIdx] = useState<number>(0);
   const revealTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -90,16 +91,19 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
     // Clear any existing timer
     if (revealTimerRef.current) clearTimeout(revealTimerRef.current);
 
-    // After 5 seconds, dismiss reveal and advance to the server's current index
+    // After 5 seconds, dismiss reveal and advance
     revealTimerRef.current = setTimeout(() => {
       setShowReveal(false);
       setRevealData(null);
       setPlayerAnswer(null);
       setIsSubmitting(false);
-      // Jump to whatever the server says is the current question
-      setDisplayedQuestionIdx(serverQuestionIdx);
+      if (isSubmittingRef) isSubmittingRef.current = false;
+
+      // Fetch latest session to ensure we have the correct current_question_index
+      // in case Realtime subscriptions missed the update
+      refetch();
     }, 5000);
-  }, [showReveal, serverQuestionIdx]);
+  }, [showReveal, refetch]);
 
   // Cleanup timer on unmount
   useEffect(() => {
@@ -140,7 +144,7 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
 
   const handleAnswer = useCallback(async (option: string) => {
     if (isSubmitting || isSubmittingRef.current || playerAnswer) return;
-    
+
     setPlayerAnswer(option);
     setIsSubmitting(true);
     isSubmittingRef.current = true;
@@ -186,9 +190,9 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
   return (
     <div className="min-h-screen bg-background flex flex-col items-center pt-20 pb-8 px-4 md:px-6 overflow-hidden relative">
       <AnimatedBackground motif="hearts" intensity="low" />
-      
+
       {/* Header with Progress */}
-      <motion.div 
+      <motion.div
         initial={{ y: -30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         className="w-full max-w-xl mb-4 md:mb-8 flex flex-col gap-4 relative z-20"
@@ -207,10 +211,10 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
               <span className="text-romantic-pink font-serif text-xs md:text-lg">{displayedQuestionIdx + 1}</span> / {QUESTIONS.length}
             </div>
           </div>
-          
+
           {/* Progress Bar Container */}
           <div className="relative h-2 w-full bg-gray-100/50 rounded-full overflow-hidden shadow-inner border border-white/20">
-            <motion.div 
+            <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progressPercent}%` }}
               transition={{ duration: 0.8, ease: [0.34, 1.56, 0.64, 1] }}
@@ -330,26 +334,26 @@ export default function GamePage({ params }: { params: Promise<{ roomCode: strin
                   className="h-full bg-romantic-pink"
                 />
               </div>
-              
+
               <div className="flex items-center justify-center gap-2 text-gray-400 text-[9px] font-black uppercase tracking-widest mt-2 overflow-hidden h-4">
                 <Loader2 size={10} className="animate-spin" />
                 <span>Next Question...</span>
               </div>
             </motion.div>
           ) : (
-            <QuestionCard 
+            <QuestionCard
               key={`q-${displayedQuestionIdx}`}
-              question={currentQuestion} 
-              onAnswer={handleAnswer} 
+              question={currentQuestion}
+              onAnswer={handleAnswer}
               selectedAnswer={playerAnswer}
               partnerAnswered={partnerAnswered}
             />
           )}
         </AnimatePresence>
       </div>
-      
+
       {/* Footer Status Indicators */}
-      <motion.div 
+      <motion.div
         initial={{ y: 30, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3 }}

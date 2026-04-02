@@ -39,7 +39,7 @@ export function useChat(conversationId: string | null) {
       const partnerPubKey = await importPublicKey(partnerPublicKey);
       secretKeyRef.current = await deriveSecretKey(myPrivateKey, partnerPubKey);
     } catch (err) {
-      console.error('useChat E2E init error:', err);
+      console.error('Chat E2E initialization failed');
     }
   }, [myProfile]);
 
@@ -71,7 +71,7 @@ export function useChat(conversationId: string | null) {
       );
       setMessages(decrypted);
     } catch (err) {
-      console.error('Fetch messages error:', err);
+      console.error('Failed to fetch messages');
     } finally {
       setLoading(false);
     }
@@ -163,7 +163,7 @@ export function useChat(conversationId: string | null) {
     try {
       await ChatService.toggleReaction(messageId, reaction);
     } catch (err) {
-      console.error('Toggle reaction error:', err);
+      console.error('Reaction toggle failed');
     }
   }, []);
 

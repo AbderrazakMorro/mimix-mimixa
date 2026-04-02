@@ -33,7 +33,7 @@ export default function RootLayout({
             <GameInviteNotification />
             <WaitingForPartner />
             <FloatingChat />
-            <main className="pt-20">
+            <main>
               {children}
             </main>
           </ProfileProvider>

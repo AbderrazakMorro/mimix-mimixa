@@ -26,13 +26,13 @@ export async function GET(request: NextRequest) {
     ]);
 
     if (profileError && profileError.code !== 'PGRST116') {
-      console.error('Error fetching profile:', profileError);
+      console.error('Profile fetch failed');
     }
     if (settingsError && settingsError.code !== 'PGRST116') {
-      console.error('Error fetching settings:', settingsError);
+      console.error('Settings fetch failed');
     }
     if (statsError && statsError.code !== 'PGRST116') {
-      console.error('Error fetching stats:', statsError);
+      console.error('Stats fetch failed');
     }
 
     return NextResponse.json({
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
       stats: stats || null,
     });
   } catch (err) {
-    console.error('Profile fetch error:', err);
+    console.error('Unexpected error in profile fetch');
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -65,7 +65,7 @@ export async function PUT(request: NextRequest) {
     const updates: Record<string, unknown> = {
       updated_at: new Date().toISOString()
     };
-    
+
     // 1. Handle Username (Pseudo) uniqueness check
     if (username !== undefined && username.trim() !== '') {
       const { data: existingUser } = await supabase
@@ -74,7 +74,7 @@ export async function PUT(request: NextRequest) {
         .eq('username', username)
         .neq('id', userTokenPayload.id)
         .single();
-      
+
       if (existingUser) {
         return NextResponse.json({ error: 'Username is already taken' }, { status: 400 });
       }
@@ -91,7 +91,7 @@ export async function PUT(request: NextRequest) {
         .select('image_url')
         .eq('id', avatar_id)
         .single();
-      
+
       if (avatarData) {
         updates.avatar_url = avatarData.image_url;
       }
@@ -108,7 +108,7 @@ export async function PUT(request: NextRequest) {
       .single();
 
     if (updateError) {
-      console.error('Error updating profile:', updateError);
+      console.error('Profile update failed');
       return NextResponse.json({ error: 'Failed to update profile' }, { status: 500 });
     }
 
@@ -136,21 +136,21 @@ export async function PUT(request: NextRequest) {
         .eq('user_id', userTokenPayload.id)
         .select()
         .single();
-      
+
       if (sError) {
-        console.error('Error updating settings:', sError);
+        console.error('Settings update failed');
       } else {
         updatedSettings = sData;
       }
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    return NextResponse.json({
+      success: true,
       profile: updatedProfile,
       settings: updatedSettings
     });
   } catch (err) {
-    console.error('Profile update error:', err);
+    console.error('Unexpected error in profile update');
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

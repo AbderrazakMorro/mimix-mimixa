@@ -78,7 +78,14 @@ export function useGameSession({ roomCode, userId }: UseGameSessionOptions) {
         if (partner) {
           setPartnerAnswered(true);
           setPartnerAnswer(partner.selected_option);
+        } else {
+          setPartnerAnswered(false);
+          setPartnerAnswer(null);
         }
+      } else {
+        setCurrentAnswers([]);
+        setPartnerAnswered(false);
+        setPartnerAnswer(null);
       }
     } catch (err) {
       setError('Session not found');
