@@ -14,8 +14,16 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "default",
+    statusBarStyle: "black-translucent",
     title: "Mimixa",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  icons: {
+    apple: [
+      { url: '/assets/logo.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
 };
 
